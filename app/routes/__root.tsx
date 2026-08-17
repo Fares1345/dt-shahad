@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { HeadContent, Scripts, Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
 import { TwilightProvider } from '@salla.sa/twilight-theme-engine';
 import {
@@ -8,6 +8,10 @@ import {
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import themeTranslations from 'virtual:twilight/theme-translations';
 import devSchema from 'virtual:twilight/schema';
+import { CartProvider } from '../components/cart/CartContext';
+import { CartDrawer } from '../components/cart/CartDrawer';
+import { DtMasterLayout } from '../components/layout/DtMasterLayout';
+import { CustomLoading, LoadingBridge } from '../components/common/CustomLoading';
 import '../styles/app.css';
 
 // Dev-only: reads the theme's local twilight.json (settings + components),
@@ -55,6 +59,7 @@ function DevStoreBasePathRedirect() {
 
 function RootComponent() {
   const ctx = getTwilightContext();
+  const [splashDone, setSplashDone] = useState(false);
 
   return (
     <html lang={ctx.locale} dir={ctx.dir} suppressHydrationWarning>
@@ -72,10 +77,18 @@ function RootComponent() {
           </a>
           .
         </noscript>
-        <TwilightProvider translations={themeTranslations}>
-          <DevStoreBasePathRedirect />
-          <Outlet />
-        </TwilightProvider>
+        <CartProvider>
+          <TwilightProvider
+            translations={themeTranslations}
+            layout={DtMasterLayout}
+            skeleton={<LoadingBridge />}
+          >
+            <DevStoreBasePathRedirect />
+            <Outlet />
+            <CartDrawer />
+          </TwilightProvider>
+        </CartProvider>
+        {!splashDone && <CustomLoading onComplete={() => setSplashDone(true)} />}
         <TanStackRouterDevtools position="bottom-right" />
         {DevSettingsWidget && (
           <Suspense fallback={null}>

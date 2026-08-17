@@ -1,12 +1,40 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import { twilightReact } from '@salla.sa/twilight-theme-engine/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
+
+// The engine treats any non-loopback request host as the store identity
+// ("the request's own host is the identity of a live storefront"). That breaks
+// LAN/phone access in dev, where the host is the PC's LAN IP and store data
+// must come from VITE_STORE_DOMAIN instead. Rewrite the Host to loopback so
+// store resolution falls back to VITE_STORE_DOMAIN for every local request.
+function loopbackHostRewrite(): Plugin {
+  return {
+    name: 'loopback-host-rewrite',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const host = req.headers.host;
+        if (host && !/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(host)) {
+          const port = host.includes(':') ? host.slice(host.lastIndexOf(':')) : '';
+          const rewritten = `localhost${port}`;
+          req.headers.host = rewritten;
+          const raw = req.rawHeaders as string[];
+          for (let i = 0; i < raw.length; i += 2) {
+            if (raw[i].toLowerCase() === 'host') raw[i + 1] = rewritten;
+          }
+          res.setHeader('x-host-rewritten', '1');
+        }
+        next();
+      });
+    },
+  };
+}
 
 export default defineConfig(async () => ({
   plugins: [
     // twilightReact() registers and configures the SSR runtime, so a theme
     // configures no server runtime of its own.
+    loopbackHostRewrite(),
     ...(await twilightReact({
       localesDir: './locales',
     })),

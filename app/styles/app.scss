@@ -50,6 +50,9 @@
 
 // Note: Tailwind directives are in app.css, not here
 
+// Design fonts (DT. Shahad): body/UI, serif headings and the logo faces.
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Montserrat:wght@300;400&family=Noto+Serif+Arabic:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800;900&display=swap');
+
 @import './01-settings/fonts';
 @import './01-settings/global';
 @import './01-settings/breakpoints';
@@ -72,7 +75,7 @@
 @import './04-components/menus';
 @import './04-components/user-menu';
 @import './04-components/user-pages';
-@import './04-components/home-blocks';
+@import './04-components/dt-shahad';
 @import './04-components/slider';
 @import './04-components/product';
 @import './04-components/brands';

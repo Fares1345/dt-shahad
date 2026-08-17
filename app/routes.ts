@@ -9,27 +9,10 @@
  * After adding a route here, create the corresponding file in `app/routes/`.
  * Do NOT prefix your custom route file with `// @auto-generated` or the
  * engine will overwrite it on the next build.
- *
- * @example Adding routes
- * ```ts
- * import { route, index } from '@tanstack/virtual-file-routes';
- *
- * export const routes = [
- *   route('/faq', 'faq.tsx'),
- *   route('/contact', 'contact.tsx'),
- *   route('/promotions/$id', 'promotions.$id.tsx'),
- * ];
- * ```
- *
- * @example Overriding a built-in route
- * ```ts
- * import { route } from '@tanstack/virtual-file-routes';
- *
- * export const routes = [
- *   route('/cart', 'custom-cart.tsx'), // replaces the engine's cart route
- * ];
- * ```
  */
-// import { route } from "@tanstack/virtual-file-routes";
+import { route } from '@tanstack/virtual-file-routes';
 
-export const routes = [];
+export const routes = [
+  route('/packages/$id', 'packages.$id.tsx'),
+  route('/about', 'about.tsx'),
+];
