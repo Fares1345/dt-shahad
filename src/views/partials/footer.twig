@@ -1,0 +1,92 @@
+{# DT. SHAHAD Footer — static port of app/components/layout/DtSiteFooter.tsx #}
+<footer class="dt-footer" data-testid="store-footer">
+    <div class="dt-footer__inner">
+        <div class="dt-footer__grid">
+            <div class="dt-footer__brand">
+                <div class="dt-footer__logo">
+                    {% include 'partials.logo' with { variant: 'white', width: 160 } %}
+                </div>
+                <p class="dt-footer__tagline">تغذية مصممة لحياتك. خطط غذائية مدروسة تساعدك على بناء أسلوب حياة أكثر توازنًا.</p>
+
+                {% set social_items = [
+                    { key: 'instagram', value: store.social.instagram|default(''), icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>' },
+                    { key: 'twitter', value: store.social.twitter|default(''), icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>' },
+                    { key: 'tiktok', value: store.social.tiktok|default(''), icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>' },
+                    { key: 'snapchat', value: store.social.snapchat|default(''), icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18.8 8.2a7 7 0 0 0-13.6 0c-1.6.4-2.7 1.5-2.7 2.8 0 1 .7 1.7 1.7 1.9.1 0 .2 0 .3.1-.1.4-.3 1-.6 1.4-.4.7-.5 1.3.2 1.4 1.4.2 2.4 1 3 2.3.5 1.1 1.4 1.4 2.6 1.4.2 0 .4.4.5.7.3.8 1 1.3 2.2 1.3s1.9-.5 2.2-1.3c.1-.3.3-.7.5-.7 1.2 0 2.1-.3 2.6-1.4.6-1.3 1.6-2.1 3-2.3.7-.1.6-.7.2-1.4-.3-.4-.5-1-.6-1.4.1 0 .2-.1.3-.1 1-.2 1.7-.9 1.7-1.9 0-1.3-1.1-2.4-2.7-2.8z"></path></svg>' },
+                    { key: 'youtube', value: store.social.youtube|default(''), icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.92 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>' },
+                    { key: 'facebook', value: store.social.facebook|default(''), icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>' },
+                    { key: 'whatsapp', value: store.social.whatsapp|default(''), icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>' },
+                ] %}
+                {% set social_links = [] %}
+                {% for item in social_items %}
+                    {% if item.value %}
+                        {% set social_links = social_links|merge([item]) %}
+                    {% endif %}
+                {% endfor %}
+                {% if social_links|length %}
+                    <div class="dt-footer__social">
+                        {% for item in social_links %}
+                            {% if item.key == 'whatsapp' %}
+                                <a href="https://wa.me/{{ item.value|replace({ '/\\D/': '' }) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ item.key }}">{{ item.icon|raw }}</a>
+                            {% else %}
+                                <a href="{{ item.value starts with 'http' ? item.value : 'https://' ~ item.value }}" target="_blank" rel="noopener noreferrer" aria-label="{{ item.key }}">{{ item.icon|raw }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="dt-footer__nav">
+                <h4 class="dt-footer__heading">التنقل</h4>
+                <a class="dt-footer__link" href="{{ link('/') }}">الرئيسية</a>
+                <a class="dt-footer__link" href="{{ link('/') }}#packages">الباقات</a>
+                <a class="dt-footer__link" href="{{ link('/about') }}">من نحن</a>
+                <a class="dt-footer__link" href="{{ link('/blog') }}">المدونة</a>
+            </div>
+
+            <div class="dt-footer__contact">
+                <h4 class="dt-footer__heading">تواصل معنا</h4>
+                {% set contact_items = [
+                    { key: 'email', value: store.contacts.email|default(''), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>' },
+                    { key: 'mobile', value: store.contacts.mobile|default(''), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>' },
+                    { key: 'phone', value: store.contacts.phone|default(''), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>' },
+                    { key: 'whatsapp', value: store.contacts.whatsapp|default(''), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>' },
+                    { key: 'telegram', value: store.contacts.telegram|default(''), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m22 2-7 20-4-9-9-4 20-7z"></path><path d="M22 2 11 13"></path></svg>' },
+                ] %}
+                {% set contact_rows = [] %}
+                {% for item in contact_items %}
+                    {% if item.value %}
+                        {% set contact_rows = contact_rows|merge([item]) %}
+                    {% endif %}
+                {% endfor %}
+                {% if contact_rows|length %}
+                    {% for item in contact_rows %}
+                        <div class="dt-contact-row">
+                            <span class="dt-contact-row__icon">{{ item.icon|raw }}</span>
+                            {% if item.key == 'email' %}
+                                <a class="dt-contact-row__link" href="mailto:{{ item.value }}">{{ item.value }}</a>
+                            {% elseif item.key == 'phone' or item.key == 'mobile' %}
+                                <a class="dt-contact-row__link" href="tel:{{ item.value }}">{{ item.value }}</a>
+                            {% elseif item.key == 'whatsapp' %}
+                                <a class="dt-contact-row__link" href="https://wa.me/{{ item.value|replace({ '/\\D/': '' }) }}">{{ item.value }}</a>
+                            {% elseif item.key == 'telegram' %}
+                                <a class="dt-contact-row__link" href="https://t.me/{{ item.value|replace({ '/^@/': '' }) }}">{{ item.value }}</a>
+                            {% else %}
+                                <span class="dt-contact-row__link">{{ item.value }}</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="dt-footer__empty">لا توجد بيانات تواصل بعد</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="dt-footer__divider"></div>
+
+        <div class="dt-footer__bottom">
+            <p class="dt-footer__copyright">© 2026 DT. SHAHAD. جميع الحقوق محفوظة.</p>
+            <p class="dt-footer__powered">مدعوم بـ Salla</p>
+        </div>
+    </div>
+</footer>

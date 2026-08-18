@@ -5,17 +5,70 @@
 | subtitle   | string | النص التوضيحي          |
 | image      | string | صورة الواجهة           |
 #}
-<section class="dt-hero" data-testid="store-home-dt-hero" style="padding: 4rem 1.5rem; text-align: center;">
-    {% if badge is defined and badge %}
-        <span style="display: inline-block; padding: .35rem .9rem; border-radius: 999px; background: var(--color-primary); color: var(--color-primary-reverse); font-size: .85rem;">{{ badge }}</span>
-    {% endif %}
-    {% if title is defined and title %}
-        <h2 style="font-size: 2.5rem; margin: 1rem 0 .5rem;">{{ title }}</h2>
-    {% endif %}
-    {% if subtitle is defined and subtitle %}
-        <p style="max-width: 640px; margin: 0 auto;">{{ subtitle }}</p>
-    {% endif %}
-    {% if image is defined and image %}
-        <img src="{{ image }}" alt="{{ title|default('') }}" style="max-width: 100%; margin-top: 2rem; border-radius: 1rem;" />
-    {% endif %}
+{% set hero_badge = badge is defined and badge ? badge : 'خطط غذائية مخصصة ٠١٠٠٪' %}
+{% set hero_title = title is defined and title ? title : 'تغذية مصممة\nلحياتك' %}
+{% set hero_subtitle = subtitle is defined and subtitle ? subtitle : 'خطط غذائية مدروسة تساعدك على بناء أسلوب حياة أكثر توازنًا، بطريقة تناسب احتياجاتك وروتينك اليومي.' %}
+{% set hero_image = image is defined and image ? image : '/assets/images/hero.jpg' %}
+{% set title_lines = hero_title|split('\n') %}
+{% set title_main = title_lines[0] %}
+{% set title_accent = title_lines[1] is defined and title_lines[1] ? title_lines[1] : null %}
+
+<section class="dt-hero hero-grid" data-testid="store-home-dt-hero">
+    <div class="dt-hero__content">
+        <div class="dt-hero__badge">
+            <span class="dt-hero__badge-dot"></span>
+            <span class="dt-hero__badge-text">{{ hero_badge }}</span>
+        </div>
+
+        <h1 class="dt-hero__title">
+            {{ title_main }}
+            {% if title_accent %}
+                <br><span class="dt-hero__accent">{{ title_accent }}</span>
+            {% endif %}
+        </h1>
+
+        <p class="dt-hero__subtitle">{{ hero_subtitle }}</p>
+
+        <div class="dt-hero__cta">
+            <a class="dt-hero__btn dt-hero__btn--primary" href="{{ link('/') }}#packages">اختر باقتك</a>
+            <a class="dt-hero__btn dt-hero__btn--ghost" href="{{ link('/about') }}">اكتشف DT. SHAHAD</a>
+        </div>
+
+        <div class="dt-hero__stats">
+            <div class="dt-hero__stat">
+                <div class="dt-hero__stat-num">٤</div>
+                <div class="dt-hero__stat-label">باقات متخصصة</div>
+            </div>
+            <div class="dt-hero__stat">
+                <div class="dt-hero__stat-num">{{ store.products_count|default(24)|number }}</div>
+                <div class="dt-hero__stat-label">منتج في المتجر</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dt-hero__media">
+        <div class="dt-hero__frame">
+            {% if hero_image %}
+                <img src="{{ hero_image }}" alt="خطة غذائية متوازنة" class="dt-hero__img">
+            {% else %}
+                <div class="dt-hero__placeholder">
+                    {% include 'partials.logo' with { width: 140 } %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="dt-hero__float">
+            <div class="dt-hero__float-label">خطتك الغذائية جاهزة</div>
+            <div class="dt-hero__float-title">أسبوع ١ — يبدأ اليوم</div>
+            <div class="dt-hero__float-meals">
+                <span class="dt-hero__float-meal">وجبة الفطور</span>
+                <span class="dt-hero__float-meal">الغداء</span>
+                <span class="dt-hero__float-meal">العشاء</span>
+            </div>
+        </div>
+
+        <div class="dt-hero__logo-mark">
+            {% include 'partials.logo' with { variant: 'white', width: 88 } %}
+        </div>
+    </div>
 </section>

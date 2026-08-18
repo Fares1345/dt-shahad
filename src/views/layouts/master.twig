@@ -10,7 +10,9 @@
 
     {% hook 'head:start' %}
     {% hook head %}
-    {% block styles %}{% endblock %}
+    {% block styles %}
+        <link rel="stylesheet" href="{{ 'app.css' | asset }}">
+    {% endblock %}
 
     <style>
         :root {
@@ -35,9 +37,11 @@
 
     <div class="app-inner">
         {% hook 'body:start' %}
+        {% include 'partials.header' %}
         <main id="main-content" role="main">
             {% block content %}{% endblock %}
         </main>
+        {% include 'partials.footer' %}
         {% hook 'body:end' %}
     </div>
 

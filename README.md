@@ -1,41 +1,67 @@
 # dt-shahad
 
-React storefront theme starter kit for [Salla](https://salla.sa) stores —
-built with TanStack Start and Vite, rendered server-side in workerd via
-`@salla.sa/twilight-theme-engine`.
+Salla storefront theme for **DT. SHAHAD — Clinical Nutrition** built on the
+standard [Twilight Twig](https://docs.salla.dev/421929m0) architecture
+(Twig views + Vite asset bundling). No React runtime.
+
+## Architecture
+
+```
+src/views/
+  layouts/master.twig      — base layout: RTL, theme colors, hooks, app.css, header/footer
+  pages/index.twig         — homepage: renders home.dt-hero + home.dt-packages components
+  partials/
+    logo.twig              — inline BrandLogo SVG (bezier leaves, Arabic tagline)
+    header.twig            — sticky blurred header: nav, cart badge, CSS-only mobile menu
+    footer.twig            — brand block, social/contact links (store.social / store.contacts), nav
+  components/home/
+    dt-hero.twig           — hero section (editable via theme settings)
+    dt-packages.twig       — 4 package cards, featured card with «الأكثر طلبًا» badge
+
+app/styles/
+  app.css                  — Tailwind directives + app.scss
+  04-components/dt-shahad.scss — DT. Shahad design system (palette, header/hero/packages/footer)
+
+app/components/            — legacy React source (reference only, not shipped)
+```
+
+The Vite build emits `public/app.css`, which `master.twig` loads via
+`{{ 'app.css' | asset }}`.
 
 ## Quick start
 
-Scaffold a new theme with the Salla CLI:
-
-```bash
-npx @salla.sa/cli@beta theme create
-```
-
-Or work directly inside a copy of this package:
-
 ```bash
 pnpm install
-pnpm dev
+pnpm build      # compiles CSS into public/app.css
 ```
 
-Running `salla theme dev` writes a `.env` with `VITE_STORE_DOMAIN`
-(defaults to the demo store), which points the dev server at your store's data,
-and `VITE_TWILIGHT_URL`, the fallback twilight SDK build used only when the
-store's settings don't pin a release (`theme.twilight.version`).
+Work on the theme in the [Salla Theme Editor](https://salla.sa) (store
+552247687, theme 689128367): the repo is the theme source, Salla builds and
+publishes it from GitHub.
 
 ## Scripts
 
 | Script           | Description                          |
 | ---------------- | ------------------------------------ |
-| `pnpm dev`       | Start the Vite dev server (workerd)  |
-| `pnpm build`     | Production build                     |
-| `pnpm preview`   | Preview the production build         |
-| `pnpm typecheck` | TypeScript type checking             |
+| `pnpm build`     | Compile CSS via Vite → `public/app.css` |
+| `pnpm dev`       | Start the Vite dev server (React sources only) |
+| `pnpm typecheck` | TypeScript type checking (React sources) |
 | `pnpm test`      | Run the test suite (Vitest)          |
+
+## Migration status
+
+| Area            | Status                                            |
+| --------------- | ------------------------------------------------- |
+| Layout/master   | ✅ Twig, RTL, theme colors, hooks                  |
+| Header          | ✅ Twig partial (nav, search/cart/account, cart badge, mobile menu) |
+| Footer          | ✅ Twig partial (social/contact from store data)   |
+| Homepage hero   | ✅ Twig component (badge, title, subtitle, image, CTAs, stats) |
+| Homepage packages | ✅ Twig component (static cards, featured badge) |
+| Products loop   | ⏳ Next — bind `home.dt-packages.products` to real store products |
+| Remaining sections (how it works, why, plan mockup) | ⏳ Next |
+| React cleanup   | ⏳ Remove `app/` React sources once migration is complete |
 
 ## Deployment
 
-Salla builds and publishes your theme on its own infrastructure — push to your
-theme repository and the platform takes it from there. No deploy configuration,
-credentials, or server runtime settings ship with this starter kit.
+Push to the theme repository — Salla builds and publishes the theme
+automatically. No deploy configuration or credentials ship with this theme.
