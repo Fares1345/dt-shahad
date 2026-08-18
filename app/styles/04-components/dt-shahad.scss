@@ -1897,3 +1897,32 @@ salla-products-list[data-testid="store-home-dt-packages-list"] {
     height: 72px;
   }
 }
+.dt-category,
+.dt-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+}
+
+.dt-category__head,
+.dt-page__title {
+  margin-bottom: 1.5rem;
+}
+
+.dt-category__title,
+.dt-page__title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  margin: 0 0 0.5rem;
+}
+
+.dt-category__desc {
+  color: #6b7280;
+  margin: 0;
+}
+
+.dt-page__content {
+  line-height: 1.9;
+  color: #374151;
+}

@@ -1,0 +1,23 @@
+{#
+| Variable    | Type   | Description                       |
+| category    | object | category.name, category.id, category.description, ... |
+#}
+{% extends "layouts.master" %}
+
+{% block title %}{{ category.name is defined and category.name ? category.name : '' }}{% endblock %}
+
+{% block content %}
+    <div class="dt-category">
+        <div class="dt-category__head">
+            <h1 class="dt-category__title">{{ category.name is defined and category.name ? category.name : '' }}</h1>
+            {% if category.description is defined and category.description %}
+                <p class="dt-category__desc">{{ category.description }}</p>
+            {% endif %}
+        </div>
+
+        <salla-products-list
+            data-testid="store-category-products"
+            source="category"
+            source-value="{{ category.id is defined ? category.id : '' }}"></salla-products-list>
+    </div>
+{% endblock %}

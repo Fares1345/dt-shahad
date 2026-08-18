@@ -36,11 +36,14 @@
             <span class="dt-breadcrumb__sep">›</span>
             <a href="{{ link('/') }}#packages" class="dt-breadcrumb__link">الباقات</a>
             <span class="dt-breadcrumb__sep">›</span>
-            <span class="dt-breadcrumb__current">{{ product.name }}</span>
+            <span class="dt-breadcrumb__current">{{ product_name }}</span>
         </nav>
 
-        {% set duration_opt = product.options|filter(o => o.name matches '/مدة|المدة|duration|period|اشتراك/i')|first %}
-        {% set duration_label = (duration_opt and duration_opt.details|length) ? duration_opt.details|first.name : null %}
+        {% set product_name = product.name is defined and product.name ? product.name : '' %}
+        {% set product_desc = product.description is defined and product.description ? product.description : '' %}
+        {% set product_options = product.options is defined and product.options ? product.options : [] %}
+        {% set duration_opt = product_options|filter(o => o.name is defined and o.name matches '/مدة|المدة|duration|period|اشتراك/i')|first %}
+        {% set duration_label = (duration_opt and duration_opt.details is defined and duration_opt.details|length) ? duration_opt.details|first.name : null %}
         {% set main_price = product.is_on_sale ? product.sale_price : (product.starting_price ? product.starting_price : product.price) %}
 
         <div class="detail-grid dt-product__grid">
@@ -55,7 +58,7 @@
                     </div>
                     <div class="dt-mockup-card__center">
                         <div class="dt-mockup-card__logo">DT</div>
-                        <div class="dt-mockup-card__name">{{ product.name }}</div>
+                        <div class="dt-mockup-card__name">{{ product_name }}</div>
                         {% if duration_label %}
                             <div class="dt-mockup-card__duration">{{ duration_label }}</div>
                         {% endif %}
@@ -75,15 +78,15 @@
 
             {# Info #}
             <div class="dt-product__info">
-                <h1 class="dt-product__title">باقة {{ product.name }}</h1>
-                <p class="dt-product__intro">{{ product.description|striptags|replace({"\r": ''})|split('\n')|filter(v => v|trim|length)|first }}</p>
+                <h1 class="dt-product__title">باقة {{ product_name }}</h1>
+                <p class="dt-product__intro">{{ product_desc|striptags|replace({"\r": ''})|split('\n')|filter(v => v|trim|length)|first }}</p>
 
                 <div class="dt-product__form-panel">
                     <form id="dt-product-form" class="dt-product-form" enctype="multipart/form-data" method="post"
                           onsubmit="return salla.form.onSubmit('cart.addItem', event)">
                         <input type="hidden" name="id" value="{{ product.id }}">
 
-                        {% if product.options|length %}
+                        {% if product_options|length %}
                             <salla-product-options data-testid="store-product-options"
                                                    options="{{ product.options }}"
                                                    product-id="{{ product.id }}"></salla-product-options>
@@ -119,7 +122,7 @@
                     </form>
                 </div>
 
-                {% set desc_lines = product.description|striptags|replace({"\r": ''})|split('\n')|filter(v => v|trim|length) %}
+                {% set desc_lines = product_desc|striptags|replace({"\r": ''})|split('\n')|filter(v => v|trim|length) %}
                 {% set includes = desc_lines|slice(5, 8) %}
                 {% if includes|length %}
                     <section class="dt-product__section">
