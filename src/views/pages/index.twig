@@ -5,6 +5,7 @@
 {% extends "layouts.master" %}
 
 {% block content %}
-    {% component 'home.dt-hero' %}
-    {% component 'home.dt-packages' %}
+    {% for component in theme.components('home') %}
+        {% component component.name with {component: component} %}
+    {% endfor %}
 {% endblock %}
