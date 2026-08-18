@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && node -e \"require('fs').rmSync('public/assets/app.js',{force:true})\"",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="{{ language.code }}" dir="{{ theme.is_rtl ? 'rtl' : 'ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ store.name }}{% endblock %}</title>
+
+    {% block head_scripts %}{% endblock %}
+
+    {% hook 'head:start' %}
+    {% hook head %}
+    {% block styles %}{% endblock %}
+
+    <style>
+        :root {
+            --color-primary: {{ theme.color.primary }};
+            --color-primary-dark: {{ theme.color.darker(0.15) }};
+            --color-primary-light: {{ theme.color.lighter(0.15) }};
+            --color-primary-reverse: {{ theme.color.reverse_text }};
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        main { min-height: 70vh; }
+    </style>
+
+    {# tracking services, custom css feature. #}
+    {% hook 'head:end' %}
+</head>
+<body id="app" class="dt-shahad {% hook 'body:classes' %}">
+    <noscript>
+        To get full functionality of this site you need to enable JavaScript.
+        <a href="https://www.enable-javascript.com/" rel="noreferrer" target="_blank">How to enable JavaScript</a>.
+    </noscript>
+
+    <div class="app-inner">
+        {% hook 'body:start' %}
+        <main id="main-content" role="main">
+            {% block content %}{% endblock %}
+        </main>
+        {% hook 'body:end' %}
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,24 @@
+{#
+| Variable   | Type     | Description       |
+| title      | string   | عنوان القسم        |
+| subtitle   | string   | نص توضيحي          |
+| products   | array    | المنتجات المعروضة  |
+| featured   | array    | الباقة المميزة     |
+#}
+<section class="dt-packages" data-testid="store-home-dt-packages" style="padding: 3rem 1.5rem;">
+    {% if title is defined and title %}
+        <h2 style="text-align: center;">{{ title }}</h2>
+    {% endif %}
+    {% if subtitle is defined and subtitle %}
+        <p style="text-align: center; max-width: 640px; margin: .5rem auto 2rem;">{{ subtitle }}</p>
+    {% endif %}
+    {% if products is defined and products %}
+        <ul style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; list-style: none; padding: 0;">
+            {% for product in products %}
+                <li style="padding: 1rem; border: 1px solid #e5e7eb; border-radius: .75rem; min-width: 180px;">
+                    {{ product.name|default('منتج') }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</section>

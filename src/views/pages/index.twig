@@ -1,0 +1,13 @@
+{#
+| Variable    | Type   | Description                                  |
+| page        | object | page.title, page.slug, ...                   |
+#}
+{% extends "layouts.master" %}
+
+{% block content %}
+    <div class="dt-hello" style="max-width: 720px; margin: 4rem auto; padding: 0 1.5rem; text-align: center;">
+        <h1 style="color: var(--color-primary); margin-bottom: .5rem;">Hello from Twig</h1>
+        <p style="font-size: 1.1rem;">مرحباً من قالب تويليت — متجر {{ store.name }}</p>
+        <p>This is the standard Twilight Twig structure. `src/views/pages/index.twig` extends `src/views/layouts/master.twig`.</p>
+    </div>
+{% endblock %}

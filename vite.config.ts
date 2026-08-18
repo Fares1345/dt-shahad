@@ -1,89 +1,15 @@
-import { defineConfig, type Plugin } from 'vite';
-import { twilightReact } from '@salla.sa/twilight-theme-engine/vite';
-import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig } from 'vite';
 import path from 'path';
 
 const rootDir = import.meta.dirname;
 
-// The engine treats any non-loopback request host as the store identity
-// ("the request's own host is the identity of a live storefront"). That breaks
-// LAN/phone access in dev, where the host is the PC's LAN IP and store data
-// must come from VITE_STORE_DOMAIN instead. Rewrite the Host to loopback so
-// store resolution falls back to VITE_STORE_DOMAIN for every local request.
-function loopbackHostRewrite(): Plugin {
-  return {
-    name: 'loopback-host-rewrite',
-    configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        const host = req.headers.host;
-        if (host && !/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i.test(host)) {
-          const port = host.includes(':') ? host.slice(host.lastIndexOf(':')) : '';
-          const rewritten = `localhost${port}`;
-          req.headers.host = rewritten;
-          const raw = req.rawHeaders as string[];
-          for (let i = 0; i < raw.length; i += 2) {
-            if (raw[i].toLowerCase() === 'host') raw[i + 1] = rewritten;
-          }
-          res.setHeader('x-host-rewritten', '1');
-        }
-        next();
-      });
-    },
-  };
-}
-
-export default defineConfig(async () => ({
-  plugins: [
-    // twilightReact() registers and configures the SSR runtime, so a theme
-    // configures no server runtime of its own.
-    loopbackHostRewrite(),
-    ...(await twilightReact({
-      localesDir: './locales',
-    })),
-    visualizer({
-      open: false,
-      gzipSize: true,
-      brotliSize: true,
-      filename: 'dist/stats.html',
-    }),
-  ],
+// Standard Twilight (Twig) theme build: Vite only bundles the theme's CSS and
+// JS assets for Twig consumption ({{ 'app.css' | asset }}). No React SSR, no
+// framework plugin — the Twig renderer is owned by the Salla CLI / Twilight.
+export default defineConfig({
   resolve: {
     alias: {
       '~': path.resolve(rootDir, './'),
-    },
-    // Singleton libs whose React context must be shared between the app and the
-    // engine's bundled screens/components (they call useSuspenseQuery /
-    // useTranslation but don't own these). Without dedupe the strict published
-    // layout resolves a second copy → "No QueryClient set" / missing i18n context.
-    dedupe: [
-      'react',
-      'react-dom',
-      'react/jsx-runtime',
-      '@tanstack/react-router',
-      '@tanstack/react-query',
-      'react-i18next',
-      'i18next',
-    ],
-  },
-  environments: {
-    ssr: {
-      // The workerd SSR runner can't execute raw CommonJS ("module is not
-      // defined") and SSR environments don't pre-bundle deps by default. Pre-
-      // optimize the CJS deps that reach SSR: @tanstack/react-query (so the
-      // engine's QueryClientProvider and route loaders share one
-      // QueryClientContext) and the engine's i18n chain
-      // (react-i18next → html-parse-stringify → use-sync-external-store).
-      // Nested paths resolve under pnpm's strict layout. html-parse-stringify
-      // v4 has no dependencies, so nothing deeper needs including.
-      optimizeDeps: {
-        include: [
-          '@tanstack/react-query',
-          '@salla.sa/twilight-theme-engine > react-i18next',
-          '@salla.sa/twilight-theme-engine > i18next',
-          '@salla.sa/twilight-theme-engine > react-i18next > html-parse-stringify',
-          '@salla.sa/twilight-theme-engine > react-i18next > use-sync-external-store',
-        ],
-      },
     },
   },
   css: {
@@ -92,58 +18,18 @@ export default defineConfig(async () => ({
     },
   },
   build: {
-    modulePreload: {
-      resolveDependencies: (url: string, deps: string[]): string[] => {
-        return deps.filter(
-          (d: string) =>
-            d.includes('vendor') ||
-            d.includes('router') ||
-            d.includes('main') ||
-            d.includes('index') ||
-            d.includes('shared-')
-        );
-      },
-    },
+    outDir: 'public',
+    publicDir: false,
+    emptyOutDir: false,
     rollupOptions: {
-      external: ['@salla.sa/twilight-components', '@salla.sa/twilight-components/dist/*'],
+      input: {
+        app: path.resolve(rootDir, 'app/styles/entry.ts'),
+      },
       output: {
-        chunkFileNames: 'assets/[name]-[hash].js',
-        manualChunks(id: string): string | undefined {
-          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
-            return 'vendor-react';
-          }
-          if (id.includes('node_modules/@tanstack/react-router/')) {
-            return 'vendor-router';
-          }
-          if (id.includes('node_modules/@uidotdev/usehooks/')) {
-            return 'vendor-hooks';
-          }
-          if (
-            id.includes('/components/common/Breadcrumb') ||
-            id.includes('/components/common/NoContent') ||
-            id.includes('/components/common/Image') ||
-            id.includes('/components/common/Link') ||
-            id.includes('/components/common/CurrencySymbol')
-          ) {
-            return 'shared-common';
-          }
-          if (
-            id.includes('/components/product/ProductCard') ||
-            id.includes('/components/product/ProductDetails') ||
-            id.includes('/components/product/ProductGallery') ||
-            id.includes('/components/product/AddToCartForm')
-          ) {
-            return 'shared-product';
-          }
-          if (
-            id.includes('/components/home/ProductsSlider') ||
-            id.includes('/components/home/Testimonials') ||
-            id.includes('/components/home/HomeComponentRenderer')
-          ) {
-            return 'shared-home';
-          }
-        },
+        entryFileNames: 'assets/[name].js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: '[name][extname]',
       },
     },
   },
-}));
+});
