@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FormEvent, SyntheticEvent } from 'react';
 import { Link } from '@tanstack/react-router';
-import type { Package } from '../../lib/packages';
-import { PACKAGES } from '../../lib/packages';
-import { useCart } from '../cart/CartContext';
+import { useMoney } from '@salla.sa/twilight-theme-engine/hooks/useMoney';
+import type { PackageView } from '../../lib/store-data';
 
 const FAQS = [
   { q: 'متى أحصل على خطتي الغذائية؟', a: 'بعد إكمال نموذج البيانات، يتم إعداد خطتك خلال ٢٤-٤٨ ساعة عمل وإرسالها إليك مباشرة.' },
@@ -12,12 +12,49 @@ const FAQS = [
   { q: 'هل يمكنني الإلغاء في أي وقت؟', a: 'يمكنك إلغاء الاشتراك وفق سياسة الإلغاء المتاحة قبل إعداد الخطة.' },
 ];
 
-export function PackageDetailContent({ pkg }: { pkg: Package }) {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const { addToCart } = useCart();
-  const isDark = pkg.id === 'tahawwul' || pkg.id === 'nakhba';
+interface SallaLike {
+  product: {
+    getPrice: (payload: FormData) => Promise<{ price: number; sale_price?: number }>;
+  };
+  form: {
+    onSubmit: (action: string, event: SyntheticEvent) => void;
+  };
+}
 
-  const relatedPkgs = PACKAGES.filter((p) => p.id !== pkg.id).slice(0, 3);
+function getSalla(): SallaLike | undefined {
+  if (typeof window === 'undefined') return undefined;
+  return (window as unknown as { salla?: SallaLike }).salla;
+}
+
+export function PackageDetailContent({ product, related }: { product: PackageView; related: PackageView[] }) {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [price, setPrice] = useState<number>(product.salePrice ?? product.price);
+  const formRef = useRef<HTMLFormElement>(null);
+  const { format } = useMoney();
+
+  const refreshPrice = useCallback(() => {
+    const salla = getSalla();
+    if (!salla || !formRef.current) return;
+    void salla.product
+      .getPrice(new FormData(formRef.current))
+      .then((result) => setPrice(result.sale_price ?? result.price))
+      .catch(() => {
+        // Keep the last known price.
+      });
+  }, []);
+
+  useEffect(() => {
+    refreshPrice();
+  }, [refreshPrice, quantity]);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const salla = getSalla();
+    if (!salla) return;
+    // The Salla SDK validates required options, serializes the form
+    // (id / quantity / options[..]) and adds the item to the real cart.
+    salla.form.onSubmit('cart.addItem', event);
+  };
 
   return (
     <div style={{ direction: 'rtl', backgroundColor: '#F7F4EE', minHeight: '80vh', overflowX: 'hidden' }}>
@@ -27,17 +64,17 @@ export function PackageDetailContent({ pkg }: { pkg: Package }) {
         <span style={{ color: '#D4CFCA', fontSize: '12px' }}>›</span>
         <Link to="/" hash="packages" style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Tajawal', sans-serif", fontSize: '13px', color: '#8A8580', padding: 0, transition: 'color 0.2s', textDecoration: 'none' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#1A1917')} onMouseLeave={(e) => (e.currentTarget.style.color = '#8A8580')}>الباقات</Link>
         <span style={{ color: '#D4CFCA', fontSize: '12px' }}>›</span>
-        <span style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '13px', color: '#1A1917' }}>{pkg.nameAr}</span>
+        <span style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '13px', color: '#1A1917' }}>{product.name}</span>
       </div>
 
       {/* Hero section */}
       <div style={{ maxWidth: '1280px', width: '100%', margin: '0 auto', padding: '40px clamp(20px, 5vw, 40px) 0' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 5vw, 64px)', alignItems: 'start' }} className="detail-grid">
-          {/* Package mockup — larger */}
+          {/* Package mockup */}
           <div style={{ position: 'sticky', top: '100px' }}>
             <div
               style={{
-                backgroundColor: pkg.color,
+                backgroundColor: '#F0EDE5',
                 borderRadius: '16px',
                 padding: 'clamp(28px, 5vw, 48px)',
                 boxShadow: '0 24px 80px rgba(0,0,0,0.12)',
@@ -52,41 +89,43 @@ export function PackageDetailContent({ pkg }: { pkg: Package }) {
             >
               <div style={{ position: 'absolute', inset: 0, opacity: 0.03 }}>
                 {Array.from({ length: 20 }).map((_, i) => (
-                  <div key={i} style={{ position: 'absolute', top: `${i * 5.5}%`, left: 0, right: 0, height: '1px', backgroundColor: isDark ? '#F7F4EE' : '#1A1917' }} />
+                  <div key={i} style={{ position: 'absolute', top: `${i * 5.5}%`, left: 0, right: 0, height: '1px', backgroundColor: '#1A1917' }} />
                 ))}
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
-                <div
-                  style={{
-                    border: `1px solid ${isDark ? 'rgba(247,244,238,0.15)' : 'rgba(26,25,23,0.15)'}`,
-                    borderRadius: '6px',
-                    padding: '6px 12px',
-                    fontFamily: "'Tajawal', sans-serif",
-                    fontSize: '11px',
-                    fontWeight: 500,
-                    color: isDark ? 'rgba(247,244,238,0.5)' : 'rgba(26,25,23,0.5)',
-                    letterSpacing: '0.08em',
-                  }}
-                >
-                  {pkg.duration}
-                </div>
-                {pkg.recommended && (
+              {product.duration && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
                   <div
                     style={{
-                      backgroundColor: pkg.accentColor,
-                      color: '#1A1917',
+                      border: '1px solid rgba(26,25,23,0.15)',
+                      borderRadius: '6px',
+                      padding: '6px 12px',
                       fontFamily: "'Tajawal', sans-serif",
                       fontSize: '11px',
-                      fontWeight: 700,
-                      padding: '5px 14px',
-                      borderRadius: '20px',
+                      fontWeight: 500,
+                      color: 'rgba(26,25,23,0.5)',
+                      letterSpacing: '0.08em',
                     }}
                   >
-                    الأكثر طلبًا
+                    {product.duration}
                   </div>
-                )}
-              </div>
+                  {product.recommended && (
+                    <div
+                      style={{
+                        backgroundColor: '#5A6340',
+                        color: '#1A1917',
+                        fontFamily: "'Tajawal', sans-serif",
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        padding: '5px 14px',
+                        borderRadius: '20px',
+                      }}
+                    >
+                      الأكثر طلبًا
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
                 <div
@@ -94,51 +133,57 @@ export function PackageDetailContent({ pkg }: { pkg: Package }) {
                     width: '80px',
                     height: '80px',
                     borderRadius: '50%',
-                    border: `1px solid ${isDark ? 'rgba(247,244,238,0.15)' : 'rgba(26,25,23,0.12)'}`,
+                    border: '1px solid rgba(26,25,23,0.12)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 20px',
                   }}
                 >
-                  <span style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '20px', fontWeight: 400, letterSpacing: '0.15em', color: isDark ? '#F7F4EE' : '#1A1917' }}>DT</span>
+                  <span style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '20px', fontWeight: 400, letterSpacing: '0.15em', color: '#1A1917' }}>DT</span>
                 </div>
                 <div
                   style={{
                     fontFamily: "'Noto Serif Arabic', serif",
                     fontSize: 'clamp(28px, 4vw, 36px)',
                     fontWeight: 600,
-                    color: isDark ? '#F7F4EE' : '#1A1917',
+                    color: '#1A1917',
                     marginBottom: '8px',
                     lineHeight: 1.2,
                   }}
                 >
-                  {pkg.nameAr}
+                  {product.name}
                 </div>
-                <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '15px', fontWeight: 400, color: isDark ? 'rgba(247,244,238,0.5)' : 'rgba(26,25,23,0.5)' }}>
-                  {pkg.tagline}
-                </div>
+                {product.duration && (
+                  <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '15px', fontWeight: 400, color: 'rgba(26,25,23,0.5)' }}>
+                    {product.duration}
+                  </div>
+                )}
               </div>
 
               <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                 <div>
-                  <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '11px', color: isDark ? 'rgba(247,244,238,0.35)' : 'rgba(26,25,23,0.35)', marginBottom: '4px' }}>{pkg.priceNote}</div>
-                  <div style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '32px', fontWeight: 600, color: isDark ? '#F7F4EE' : '#1A1917', lineHeight: 1 }}>{pkg.price}</div>
+                  {product.salePrice !== null && (
+                    <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '11px', color: 'rgba(26,25,23,0.35)', marginBottom: '4px', textDecoration: 'line-through' }}>
+                      {format(product.price)}
+                    </div>
+                  )}
+                  <div style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '32px', fontWeight: 600, color: '#1A1917', lineHeight: 1 }}>{format(product.salePrice ?? product.price)}</div>
                 </div>
-                <div style={{ width: '32px', height: '2px', backgroundColor: pkg.accentColor, borderRadius: '1px' }} />
+                <div style={{ width: '32px', height: '2px', backgroundColor: '#5A6340', borderRadius: '1px' }} />
               </div>
 
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', backgroundColor: pkg.accentColor }} />
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', backgroundColor: '#5A6340' }} />
             </div>
           </div>
 
-          {/* Right info */}
+          {/* Info */}
           <div style={{ direction: 'rtl' }}>
             <h1 style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: 'clamp(28px, 5vw, 42px)', fontWeight: 500, color: '#1A1917', margin: '0 0 12px', lineHeight: 1.3 }}>
-              باقة {pkg.nameAr}
+              باقة {product.name}
             </h1>
             <p style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '16px', color: '#8A8580', lineHeight: 1.9, margin: '0 0 32px' }}>
-              {pkg.description}
+              {product.description}
             </p>
 
             <div
@@ -150,86 +195,199 @@ export function PackageDetailContent({ pkg }: { pkg: Package }) {
                 border: '1px solid #E8E3DC',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-                <div>
-                  <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '12px', color: '#8A8580', marginBottom: '4px' }}>{pkg.priceNote}</div>
-                  <div style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: 'clamp(28px, 4vw, 34px)', fontWeight: 600, color: '#1A1917', lineHeight: 1 }}>{pkg.price}</div>
-                </div>
-                <span
+              <form ref={formRef} onSubmit={handleSubmit}>
+                <input type="hidden" name="id" value={product.id} />
+                <input type="hidden" name="quantity" value={String(quantity)} />
+
+                {product.options.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', marginBottom: '20px' }}>
+                    {product.options.map((group) => (
+                      <div key={group.id}>
+                        <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '13px', fontWeight: 600, color: '#1A1917', marginBottom: '10px' }}>
+                          {group.name}
+                          {group.required && <span style={{ color: '#C4AB6E' }}> *</span>}
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                          {group.values.map((value) => (
+                            <label
+                              key={value.id}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                border: '1px solid #D4CFCA',
+                                borderRadius: '20px',
+                                padding: '7px 16px',
+                                cursor: 'pointer',
+                                fontFamily: "'Tajawal', sans-serif",
+                                fontSize: '13px',
+                                color: '#2E2C29',
+                                backgroundColor: '#FBF9F3',
+                                transition: 'border-color 0.2s ease',
+                              }}
+                            >
+                              <input
+                                type="radio"
+                                name={`options[${group.id}]`}
+                                value={value.id}
+                                defaultChecked={value.is_selected === true}
+                                onChange={refreshPrice}
+                                style={{ accentColor: '#5A6340', margin: 0 }}
+                              />
+                              <span>{value.name}</span>
+                              {typeof value.price === 'number' && value.price > 0 && (
+                                <span style={{ color: '#5A6340', fontWeight: 600 }}>+{format(value.price)}</span>
+                              )}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div
                   style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                     backgroundColor: '#EDE9E0',
-                    color: '#5A6340',
-                    fontFamily: "'Tajawal', sans-serif",
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    padding: '6px 16px',
-                    borderRadius: '20px',
+                    borderRadius: '8px',
+                    padding: '6px',
+                    marginBottom: '14px',
                   }}
                 >
-                  {pkg.duration}
-                </span>
-              </div>
-              <button
-                onClick={() => addToCart(pkg)}
-                style={{
-                  width: '100%',
-                  padding: '15px',
-                  backgroundColor: '#1A1917',
-                  color: '#F7F4EE',
-                  fontFamily: "'Tajawal', sans-serif",
-                  fontSize: '15px',
-                  fontWeight: 500,
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  transition: 'opacity 0.2s ease',
-                }}
-                onMouseEnter={(e) => (e.currentTarget as HTMLButtonElement).style.opacity = '0.85'}
-                onMouseLeave={(e) => (e.currentTarget as HTMLButtonElement).style.opacity = '1'}
-              >
-                أضف إلى السلة
-              </button>
+                  <span style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '13px', color: '#8A8580', padding: '0 10px' }}>الكمية</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => q + 1)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#5A6340',
+                        fontSize: '17px',
+                        lineHeight: 1,
+                        padding: '4px 6px',
+                        fontFamily: "'Tajawal', sans-serif",
+                      }}
+                      aria-label="زيادة الكمية"
+                    >
+                      +
+                    </button>
+                    <span style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '15px', fontWeight: 600, color: '#1A1917', minWidth: '20px', textAlign: 'center' }}>
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#5A6340',
+                        fontSize: '17px',
+                        lineHeight: 1,
+                        padding: '4px 6px',
+                        fontFamily: "'Tajawal', sans-serif",
+                      }}
+                      aria-label="إنقاص الكمية"
+                    >
+                      −
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+                  <div style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: 'clamp(28px, 4vw, 34px)', fontWeight: 600, color: '#1A1917', lineHeight: 1 }}>
+                    {format(price)}
+                  </div>
+                  {product.duration && (
+                    <span
+                      style={{
+                        backgroundColor: '#EDE9E0',
+                        color: '#5A6340',
+                        fontFamily: "'Tajawal', sans-serif",
+                        fontSize: '13px',
+                        fontWeight: 500,
+                        padding: '6px 16px',
+                        borderRadius: '20px',
+                      }}
+                    >
+                      {product.duration}
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={!product.available}
+                  style={{
+                    width: '100%',
+                    padding: '15px',
+                    backgroundColor: '#1A1917',
+                    color: '#F7F4EE',
+                    fontFamily: "'Tajawal', sans-serif",
+                    fontSize: '15px',
+                    fontWeight: 500,
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: product.available ? 'pointer' : 'not-allowed',
+                    opacity: product.available ? 1 : 0.45,
+                    transition: 'opacity 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => { if (product.available) (e.currentTarget as HTMLButtonElement).style.opacity = '0.85'; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = product.available ? '1' : '0.45'; }}
+                >
+                  {product.available ? 'أضف إلى السلة' : 'نفذت الكمية'}
+                </button>
+              </form>
             </div>
 
-            <div style={{ marginBottom: '32px' }}>
-              <h3 style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '18px', fontWeight: 600, color: '#1A1917', margin: '0 0 16px' }}>ماذا تشمل الباقة</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {pkg.includes.map((item) => (
-                  <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#EDE9E0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8 3" stroke="#5A6340" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            {product.includes.length > 0 && (
+              <div style={{ marginBottom: '32px' }}>
+                <h3 style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '18px', fontWeight: 600, color: '#1A1917', margin: '0 0 16px' }}>ماذا تشمل الباقة</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {product.includes.map((item) => (
+                    <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#EDE9E0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8 3" stroke="#5A6340" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </div>
+                      <span style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '14.5px', color: '#2E2C29', fontWeight: 400 }}>{item}</span>
                     </div>
-                    <span style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '14.5px', color: '#2E2C29', fontWeight: 400 }}>{item}</span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            <div>
-              <h3 style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '18px', fontWeight: 600, color: '#1A1917', margin: '0 0 16px' }}>المميزات</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '12px' }}>
-                {pkg.benefits.map((b) => (
-                  <div
-                    key={b}
-                    style={{
-                      backgroundColor: '#F0ECE4',
-                      borderRadius: '6px',
-                      padding: '14px 16px',
-                      fontFamily: "'Tajawal', sans-serif",
-                      fontSize: '13.5px',
-                      color: '#2E2C29',
-                      fontWeight: 400,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#5A6340', flexShrink: 0 }} />
-                    {b}
-                  </div>
-                ))}
+            {product.benefits.length > 0 && (
+              <div>
+                <h3 style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '18px', fontWeight: 600, color: '#1A1917', margin: '0 0 16px' }}>المميزات</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '12px' }}>
+                  {product.benefits.map((b) => (
+                    <div
+                      key={b}
+                      style={{
+                        backgroundColor: '#F0ECE4',
+                        borderRadius: '6px',
+                        padding: '14px 16px',
+                        fontFamily: "'Tajawal', sans-serif",
+                        fontSize: '13.5px',
+                        color: '#2E2C29',
+                        fontWeight: 400,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#5A6340', flexShrink: 0 }} />
+                      {b}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -288,20 +446,19 @@ export function PackageDetailContent({ pkg }: { pkg: Package }) {
       </div>
 
       {/* Related packages */}
-      <div style={{ maxWidth: '1280px', width: '100%', margin: '64px auto 0', padding: '0 clamp(20px, 5vw, 40px) 88px' }}>
-        <h2 style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: 'clamp(22px, 4vw, 24px)', fontWeight: 500, color: '#1A1917', margin: '0 0 28px' }}>باقات أخرى</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '20px' }} className="related-grid">
-          {relatedPkgs.map((rp) => {
-            const rIsDark = rp.id === 'tahawwul' || rp.id === 'nakhba';
-            return (
+      {related.length > 0 && (
+        <div style={{ maxWidth: '1280px', width: '100%', margin: '64px auto 0', padding: '0 clamp(20px, 5vw, 40px) 88px' }}>
+          <h2 style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: 'clamp(22px, 4vw, 24px)', fontWeight: 500, color: '#1A1917', margin: '0 0 28px' }}>باقات أخرى</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '20px' }} className="related-grid">
+            {related.map((rp) => (
               <Link
                 key={rp.id}
                 to={`/packages/${rp.id}`}
                 style={{
-                  backgroundColor: rp.color,
+                  backgroundColor: '#F0EDE5',
                   borderRadius: '8px',
                   padding: '24px',
-                  border: `1px solid ${rIsDark ? 'rgba(255,255,255,0.06)' : '#D4CFCA'}`,
+                  border: '1px solid #D4CFCA',
                   cursor: 'pointer',
                   direction: 'rtl',
                   textAlign: 'right',
@@ -312,14 +469,14 @@ export function PackageDetailContent({ pkg }: { pkg: Package }) {
                 onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)'}
                 onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)'}
               >
-                <div style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '18px', fontWeight: 600, color: rIsDark ? '#F7F4EE' : '#1A1917', marginBottom: '8px' }}>{rp.nameAr}</div>
-                <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '13px', color: rIsDark ? 'rgba(247,244,238,0.5)' : '#8A8580', marginBottom: '16px', lineHeight: 1.6 }}>{rp.tagline}</div>
-                <div style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '20px', fontWeight: 600, color: rp.accentColor }}>{rp.price}</div>
+                <div style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '18px', fontWeight: 600, color: '#1A1917', marginBottom: '8px' }}>{rp.name}</div>
+                <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '13px', color: '#8A8580', marginBottom: '16px', lineHeight: 1.6 }}>{rp.description}</div>
+                <div style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '20px', fontWeight: 600, color: '#5A6340' }}>{format(rp.salePrice ?? rp.price)}</div>
               </Link>
-            );
-          })}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

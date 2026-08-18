@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from '@tanstack/react-router';
-import type { Package } from '../../lib/packages';
-import { PACKAGES } from '../../lib/packages';
+import { getTwilightContext } from '@salla.sa/twilight-theme-engine/tanstack';
+import { useMoney } from '@salla.sa/twilight-theme-engine/hooks/useMoney';
+import { useAsset } from '@salla.sa/twilight-theme-engine/hooks/useAsset';
 import BrandLogo from '../brand/BrandLogo';
 import { useCart } from '../cart/CartContext';
+import { resolveText, toArabicDigits, type PackageView } from '../../lib/store-data';
 
 const OLIVE = '#3D472E';
 const OLIVE_ACCENT = '#5A6340';
@@ -27,9 +29,10 @@ function CheckIcon() {
   );
 }
 
-function PackageCard({ pkg, index }: { pkg: Package; index: number }) {
+function PackageCard({ pkg }: { pkg: PackageView }) {
   const featured = pkg.recommended;
   const { addToCart } = useCart();
+  const { format } = useMoney();
   const baseShadow = featured
     ? '0 24px 60px rgba(61,71,46,0.16)'
     : '0 10px 34px rgba(61,71,46,0.07)';
@@ -102,49 +105,55 @@ function PackageCard({ pkg, index }: { pkg: Package; index: number }) {
           textAlign: 'center',
         }}
       >
-        {pkg.nameAr}
+        {pkg.name}
       </h3>
-      <p
-        style={{
-          fontFamily: "'Tajawal', sans-serif",
-          fontSize: '12px',
-          fontWeight: 500,
-          letterSpacing: '0.04em',
-          color: OLIVE_ACCENT,
-          margin: '0 0 22px',
-          textAlign: 'center',
-        }}
-      >
-        {pkg.duration}
-      </p>
+      {pkg.duration && (
+        <p
+          style={{
+            fontFamily: "'Tajawal', sans-serif",
+            fontSize: '12px',
+            fontWeight: 500,
+            letterSpacing: '0.04em',
+            color: OLIVE_ACCENT,
+            margin: '0 0 22px',
+            textAlign: 'center',
+          }}
+        >
+          {pkg.duration}
+        </p>
+      )}
 
       <div style={{ height: '1px', backgroundColor: '#EAE4D8', margin: '0 0 22px' }} />
 
-      <ul style={{ margin: '0 0 28px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '13px' }}>
-        {pkg.benefits.map((b) => (
-          <li
-            key={b}
-            style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '10px',
-              fontFamily: "'Tajawal', sans-serif",
-              fontSize: '14px',
-              fontWeight: 400,
-              lineHeight: 1.5,
-              color: '#3A3E30',
-            }}
-          >
-            <CheckIcon />
-            <span>{b}</span>
-          </li>
-        ))}
-      </ul>
+      {pkg.benefits.length > 0 && (
+        <ul style={{ margin: '0 0 28px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '13px' }}>
+          {pkg.benefits.map((b) => (
+            <li
+              key={b}
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px',
+                fontFamily: "'Tajawal', sans-serif",
+                fontSize: '14px',
+                fontWeight: 400,
+                lineHeight: 1.5,
+                color: '#3A3E30',
+              }}
+            >
+              <CheckIcon />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <div style={{ marginTop: 'auto', textAlign: 'center', marginBottom: '22px' }}>
-        <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '11.5px', color: '#9A9484', marginBottom: '6px' }}>
-          {pkg.priceNote}
-        </div>
+        {pkg.salePrice !== null && (
+          <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '11.5px', color: '#9A9484', marginBottom: '6px', textDecoration: 'line-through' }}>
+            {format(pkg.price)}
+          </div>
+        )}
         <div
           style={{
             fontFamily: "'Noto Serif Arabic', serif",
@@ -154,12 +163,13 @@ function PackageCard({ pkg, index }: { pkg: Package; index: number }) {
             lineHeight: 1,
           }}
         >
-          {pkg.price}
+          {format(pkg.salePrice ?? pkg.price)}
         </div>
       </div>
 
       <button
-        onClick={() => addToCart(pkg)}
+        disabled={!pkg.available}
+        onClick={() => void addToCart(pkg.id)}
         style={{
           padding: '14px 0',
           backgroundColor: featured ? OLIVE : 'transparent',
@@ -169,11 +179,13 @@ function PackageCard({ pkg, index }: { pkg: Package; index: number }) {
           fontWeight: 600,
           border: `1.5px solid ${OLIVE}`,
           borderRadius: '10px',
-          cursor: 'pointer',
+          cursor: pkg.available ? 'pointer' : 'not-allowed',
           width: '100%',
+          opacity: pkg.available ? 1 : 0.45,
           transition: 'background-color 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease',
         }}
         onMouseEnter={(e) => {
+          if (!pkg.available) return;
           const el = e.currentTarget as HTMLButtonElement;
           el.style.backgroundColor = OLIVE;
           el.style.color = '#F7F4EE';
@@ -188,7 +200,7 @@ function PackageCard({ pkg, index }: { pkg: Package; index: number }) {
           el.style.boxShadow = 'none';
         }}
       >
-        اختر الباقة
+        {pkg.available ? 'اختر الباقة' : 'نفذت الكمية'}
       </button>
 
       <Link
@@ -216,10 +228,36 @@ function PackageCard({ pkg, index }: { pkg: Package; index: number }) {
   );
 }
 
-export function DtHomeContent() {
+interface DtHomeContentProps {
+  heroCfg?: Record<string, unknown>;
+  packagesCfg?: Record<string, unknown>;
+  packages: PackageView[];
+  productsCount: number;
+}
+
+export function DtHomeContent({ heroCfg, packagesCfg, packages, productsCount }: DtHomeContentProps) {
   const packagesRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const ctx = getTwilightContext();
+  const locale = ctx.locale;
+  const { asset } = useAsset();
+
+  const heroBadge = resolveText(heroCfg?.badge, locale) ?? 'خطط غذائية مخصصة ٠١٠٠٪';
+  const heroTitle = resolveText(heroCfg?.title, locale) ?? 'تغذية مصممة\nلحياتك';
+  const heroSubtitle =
+    resolveText(heroCfg?.subtitle, locale) ??
+    'خطط غذائية مدروسة تساعدك على بناء أسلوب حياة أكثر توازنًا، بطريقة تناسب احتياجاتك وروتينك اليومي.';
+  const heroImage =
+    typeof heroCfg?.image === 'string' && heroCfg.image ? heroCfg.image : (packages[0]?.image ?? null);
+  const packagesTitle = resolveText(packagesCfg?.title, locale) ?? `${toArabicDigits(packages.length)} باقات، وخطة تناسبك`;
+  const packagesSubtitle =
+    resolveText(packagesCfg?.subtitle, locale) ??
+    'اختر المدة التي تناسب أهدافك، وابدأ رحلتك مع خطة تغذية علاجية مصممة خصيصًا لك.';
+
+  const titleLines = heroTitle.split('\n');
+  const titleMain = titleLines[0];
+  const titleAccent = titleLines.slice(1).join(' ').trim();
 
   useEffect(() => {
     if (location.hash === '#packages' && packagesRef.current) {
@@ -268,7 +306,7 @@ export function DtHomeContent() {
           >
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#5A6340', display: 'inline-block' }} />
             <span style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '12.5px', fontWeight: 400, color: '#8A8580', letterSpacing: '0.04em' }}>
-              خطط غذائية مخصصة ٠١٠٠٪
+              {heroBadge}
             </span>
           </div>
 
@@ -283,9 +321,13 @@ export function DtHomeContent() {
               letterSpacing: '-0.01em',
             }}
           >
-            تغذية مصممة
-            <br />
-            <span style={{ color: '#5A6340' }}>لحياتك</span>
+            {titleMain}
+            {titleAccent && (
+              <>
+                <br />
+                <span style={{ color: '#5A6340' }}>{titleAccent}</span>
+              </>
+            )}
           </h1>
 
           <p
@@ -299,7 +341,7 @@ export function DtHomeContent() {
               maxWidth: '420px',
             }}
           >
-            خطط غذائية مدروسة تساعدك على بناء أسلوب حياة أكثر توازنًا، بطريقة تناسب احتياجاتك وروتينك اليومي.
+            {heroSubtitle}
           </p>
 
           <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
@@ -349,9 +391,8 @@ export function DtHomeContent() {
 
           <div style={{ display: 'flex', gap: '40px', paddingTop: '16px', borderTop: '1px solid #E8E3DC' }}>
             {[
-              { num: '+٢٠٠٠', label: 'عميل راضٍ' },
-              { num: '٤', label: 'باقات متخصصة' },
-              { num: '٩٨٪', label: 'نسبة الرضا' },
+              { num: toArabicDigits(packages.length), label: 'باقات متخصصة' },
+              { num: toArabicDigits(productsCount), label: 'منتج في المتجر' },
             ].map((stat) => (
               <div key={stat.label}>
                 <div style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '22px', fontWeight: 600, color: '#1A1917' }}>{stat.num}</div>
@@ -370,11 +411,17 @@ export function DtHomeContent() {
               backgroundColor: '#E4DFD5',
             }}
           >
-            <img
-              src="https://images.unsplash.com/photo-1778690103044-88ad0e274e32?w=800&h=1000&fit=crop&auto=format&q=80"
-              alt="خطة غذائية متوازنة"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
+            {heroImage ? (
+              <img
+                src={heroImage}
+                alt="خطة غذائية متوازنة"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+            ) : (
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <BrandLogo width={140} style={{ opacity: 0.55 }} />
+              </div>
+            )}
           </div>
           <div
             className="hero-float"
@@ -459,7 +506,7 @@ export function DtHomeContent() {
                 lineHeight: 1.3,
               }}
             >
-              ٤ باقات، وخطة تناسبك
+              {packagesTitle}
             </h2>
             <p
               style={{
@@ -471,13 +518,13 @@ export function DtHomeContent() {
                 lineHeight: 1.8,
               }}
             >
-              اختر المدة التي تناسب أهدافك، وابدأ رحلتك مع خطة تغذية علاجية مصممة خصيصًا لك.
+              {packagesSubtitle}
             </p>
           </div>
 
           <div className="packages-grid">
-            {PACKAGES.map((pkg, i) => (
-              <PackageCard key={pkg.id} pkg={pkg} index={i} />
+            {packages.map((pkg) => (
+              <PackageCard key={pkg.id} pkg={pkg} />
             ))}
           </div>
         </div>
@@ -671,7 +718,7 @@ export function DtHomeContent() {
                   }}
                 >
                   <img
-                    src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=300&fit=crop&auto=format&q=80"
+                    src={asset('images/plan-cover.jpg')}
                     alt="غلاف خطة التغذية"
                     style={{
                       width: '100%',
@@ -705,9 +752,6 @@ export function DtHomeContent() {
                           <div style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '0 10px' }}>
                             <div style={{ width: `${40 + i * 15}%`, height: '4px', borderRadius: '2px', backgroundColor: i === 1 ? '#5A6340' : '#E8E3DC' }} />
                           </div>
-                          <span style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '12px', color: '#8A8580', whiteSpace: 'nowrap' }}>
-                            {['٤٢٠', '٦٨٠', '٥٢٠', '٢٢٠'][i]} سعرة
-                          </span>
                         </div>
                       ))}
                     </div>
@@ -724,7 +768,7 @@ export function DtHomeContent() {
                       }}
                     >
                       <span style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '12px', color: '#8A8580', fontWeight: 600 }}>المجموع اليومي</span>
-                      <span style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '16px', fontWeight: 700, color: '#5A6340' }}>١٨٤٠ سعرة</span>
+                      <span style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '16px', fontWeight: 700, color: '#5A6340' }}>حسب هدفك</span>
                     </div>
                   </div>
 
@@ -810,52 +854,6 @@ export function DtHomeContent() {
                 ابدأ الآن
               </button>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS STRIP ───────────────────────────────── */}
-      <section style={{ backgroundColor: '#F7F4EE', padding: '64px 0', borderTop: '1px solid #E8E3DC' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 40px' }}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '32px',
-            }}
-            className="testimonials-grid"
-          >
-            {[
-              { name: 'سارة المنصور', role: 'موظفة — الرياض', text: 'أخيرًا وجدت خطة غذائية أستطيع الاستمرار عليها. خطة DT. SHAHAD سهّلت عليّ اتخاذ قرارات الطعام اليومية.' },
-              { name: 'فهد الشمري', role: 'مهندس — جدة', text: 'خلال ثلاثة أشهر حققت أهدافي. الفريق متجاوب جدًا والخطة واضحة وقابلة للتطبيق.' },
-              { name: 'نورة القحطاني', role: 'معلمة — الدمام', text: 'ما توقعت أن التغذية الصحية تكون بهذه السهولة والمتعة. شكرًا DT. SHAHAD.' },
-            ].map((t) => (
-              <div
-                key={t.name}
-                style={{
-                  backgroundColor: '#F0ECE4',
-                  borderRadius: '8px',
-                  padding: '28px 24px',
-                  direction: 'rtl',
-                  border: '1px solid #E8E3DC',
-                }}
-              >
-                <div style={{ display: 'flex', gap: '3px', marginBottom: '16px' }}>
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <svg key={i} width="13" height="13" viewBox="0 0 24 24" fill="#C9AD7A">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                  ))}
-                </div>
-                <p style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '14.5px', fontWeight: 400, color: '#2E2C29', lineHeight: 1.8, margin: '0 0 20px' }}>
-                  "{t.text}"
-                </p>
-                <div>
-                  <div style={{ fontFamily: "'Noto Serif Arabic', serif", fontSize: '15px', fontWeight: 600, color: '#1A1917' }}>{t.name}</div>
-                  <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '12px', color: '#8A8580', marginTop: '3px' }}>{t.role}</div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>

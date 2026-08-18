@@ -8,7 +8,6 @@ const NAV_LINKS: { label: string; to: string; hash?: string }[] = [
   { label: 'الباقات', to: '/', hash: 'packages' },
   { label: 'من نحن', to: '/about' },
   { label: 'المدونة', to: '/blog' },
-  { label: 'تواصل معنا', to: '/about' },
 ];
 
 export function DtSiteHeader() {

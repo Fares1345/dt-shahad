@@ -1,73 +1,253 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { CartItem, Package } from '../../lib/packages';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import type { ReactNode } from 'react';
 
-const STORAGE_KEY = 'dt-shahad-cart';
+/**
+ * Cart state bound to the real Salla cart. No localStorage, no fake items —
+ * every mutation goes through the Salla SDK and the drawer renders whatever
+ * `salla.api.cart.details()` returns for the current customer.
+ */
+
+export interface CartItemView {
+  id: string;
+  productId: number | string;
+  name: string;
+  image: string;
+  url: string;
+  quantity: number;
+  price: number;
+  total: number;
+  available: boolean;
+}
+
+export interface CartTotalsView {
+  subTotal: number;
+  discount: number;
+  taxAmount: number;
+  total: number;
+}
 
 interface CartContextValue {
-  items: CartItem[];
+  items: CartItemView[];
   count: number;
+  totals: CartTotalsView | null;
+  isLoading: boolean;
   isOpen: boolean;
-  addToCart: (pkg: Package) => void;
-  removeFromCart: (id: string) => void;
   openCart: () => void;
   closeCart: () => void;
+  refreshCart: () => Promise<void>;
+  addToCart: (productId: string | number, quantity?: number) => Promise<void>;
+  updateQuantity: (itemId: string, quantity: number) => Promise<void>;
+  removeItem: (itemId: string) => Promise<void>;
+  submitCart: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-function loadCart(): CartItem[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as CartItem[];
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter((i) => i && i.pkg && typeof i.pkg.id === 'string');
-  } catch {
-    return [];
-  }
+interface SallaCartDetailsItem {
+  id: string;
+  product_id: number;
+  product_name: string;
+  product_image: string;
+  url: string;
+  quantity: number;
+  price: number;
+  total: number;
+  is_available: boolean;
 }
 
+interface SallaCartDetails {
+  items?: SallaCartDetailsItem[];
+  count?: number;
+  sub_total: number;
+  total: number;
+  discount: number;
+  tax_amount: number;
+}
+
+interface SallaLike {
+  cart: {
+    api: { getCurrentCartId: () => Promise<number | null> };
+    addItem: (productId: number | string, quantity?: number) => Promise<void>;
+    updateItem: (payload: { id: number | string; quantity: number }) => Promise<void>;
+    deleteItem: (itemId: number | string) => Promise<void>;
+    submit: () => Promise<void>;
+  };
+  api: {
+    cart: {
+      details: (cartId?: number | null) => Promise<{ data?: { cart?: SallaCartDetails } }>;
+    };
+  };
+  event: {
+    on: (event: string, callback: () => void) => unknown;
+    off: (event: string, callback: () => void) => unknown;
+  };
+}
+
+function getSalla(): SallaLike | undefined {
+  if (typeof window === 'undefined') return undefined;
+  return (window as unknown as { salla?: SallaLike }).salla;
+}
+
+const CART_EVENTS = ['Product Added', 'Product Removed', 'Cart Updated'];
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItemView[]>([]);
+  const [count, setCount] = useState(0);
+  const [totals, setTotals] = useState<CartTotalsView | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const refreshIdRef = useRef(0);
 
-  useEffect(() => {
-    if (hydrated) return;
-    setItems(loadCart());
-    setHydrated(true);
-  }, [hydrated]);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    } catch {
-      // storage unavailable — cart stays in memory
+  const refreshCart = useCallback(async () => {
+    const salla = getSalla();
+    if (!salla) {
+      setIsLoading(false);
+      return;
     }
-  }, [items, hydrated]);
-
-  const addToCart = useCallback((pkg: Package) => {
-    setItems((prev) => {
-      if (prev.find((i) => i.pkg.id === pkg.id)) return prev;
-      return [...prev, { pkg, quantity: 1 }];
-    });
-    setIsOpen(true);
+    const runId = ++refreshIdRef.current;
+    setIsLoading(true);
+    try {
+      const cartId = await salla.cart.api.getCurrentCartId();
+      if (cartId == null) {
+        setItems([]);
+        setCount(0);
+        setTotals(null);
+        return;
+      }
+      const response = await salla.api.cart.details(cartId);
+      const cart = response?.data?.cart;
+      if (!cart) return;
+      setItems(
+        (cart.items ?? []).map((item) => ({
+          id: item.id,
+          productId: item.product_id,
+          name: item.product_name,
+          image: item.product_image,
+          url: item.url,
+          quantity: item.quantity,
+          price: item.price,
+          total: item.total,
+          available: item.is_available,
+        }))
+      );
+      setCount(cart.count ?? cart.items?.length ?? 0);
+      setTotals({
+        subTotal: cart.sub_total,
+        discount: cart.discount,
+        taxAmount: cart.tax_amount,
+        total: cart.total,
+      });
+    } catch {
+      // Keep the last known cart state; the SDK already surfaces errors.
+    } finally {
+      if (runId === refreshIdRef.current) setIsLoading(false);
+    }
   }, []);
 
-  const removeFromCart = useCallback((id: string) => {
-    setItems((prev) => prev.filter((i) => i.pkg.id !== id));
-  }, []);
+  useEffect(() => {
+    void refreshCart();
+    const salla = getSalla();
+    if (!salla) return;
+    const handler = () => void refreshCart();
+    CART_EVENTS.forEach((event) => salla.event.on(event, handler));
+    return () => {
+      CART_EVENTS.forEach((event) => salla.event.off(event, handler));
+    };
+  }, [refreshCart]);
 
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
 
-  const count = useMemo(() => items.reduce((sum, i) => sum + i.quantity, 0), [items]);
+  const addToCart = useCallback(
+    async (productId: string | number, quantity = 1) => {
+      const salla = getSalla();
+      if (!salla) return;
+      try {
+        await salla.cart.addItem(productId, quantity);
+        openCart();
+        await refreshCart();
+      } catch {
+        // The SDK shows the failure toast to the customer.
+      }
+    },
+    [openCart, refreshCart]
+  );
 
-  const value = useMemo(
-    () => ({ items, count, isOpen, addToCart, removeFromCart, openCart, closeCart }),
-    [items, count, isOpen, addToCart, removeFromCart, openCart, closeCart]
+  const updateQuantity = useCallback(
+    async (itemId: string, quantity: number) => {
+      const salla = getSalla();
+      if (!salla || quantity < 1) return;
+      try {
+        await salla.cart.updateItem({ id: itemId, quantity });
+        await refreshCart();
+      } catch {
+        // The SDK shows the failure toast to the customer.
+      }
+    },
+    [refreshCart]
+  );
+
+  const removeItem = useCallback(
+    async (itemId: string) => {
+      const salla = getSalla();
+      if (!salla) return;
+      try {
+        await salla.cart.deleteItem(itemId);
+        await refreshCart();
+      } catch {
+        // The SDK shows the failure toast to the customer.
+      }
+    },
+    [refreshCart]
+  );
+
+  const submitCart = useCallback(async () => {
+    const salla = getSalla();
+    if (!salla) return;
+    try {
+      await salla.cart.submit();
+    } catch {
+      // The SDK shows the failure toast to the customer.
+    }
+  }, []);
+
+  const value = useMemo<CartContextValue>(
+    () => ({
+      items,
+      count,
+      totals,
+      isLoading,
+      isOpen,
+      openCart,
+      closeCart,
+      refreshCart,
+      addToCart,
+      updateQuantity,
+      removeItem,
+      submitCart,
+    }),
+    [
+      items,
+      count,
+      totals,
+      isLoading,
+      isOpen,
+      openCart,
+      closeCart,
+      refreshCart,
+      addToCart,
+      updateQuantity,
+      removeItem,
+      submitCart,
+    ]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

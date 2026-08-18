@@ -178,12 +178,6 @@ img, video {
   align-items: center;
 }
 
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-}
-
 /* ── Package detail grids ───────────────────────────────────── */
 
 .detail-grid {
@@ -238,10 +232,6 @@ img, video {
   }
 
   .plan-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .testimonials-grid {
     grid-template-columns: 1fr !important;
   }
 

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { useAsset } from '@salla.sa/twilight-theme-engine/hooks/useAsset';
 
 const VALUES = [
   {
@@ -32,6 +33,7 @@ const TEAM = [
 ];
 
 export function AboutContent() {
+  const { asset } = useAsset();
   return (
     <div style={{ direction: 'rtl', backgroundColor: '#F7F4EE' }}>
       {/* Hero */}
@@ -54,7 +56,7 @@ export function AboutContent() {
             </div>
             <div style={{ borderRadius: '12px', overflow: 'hidden', aspectRatio: '4/3', backgroundColor: '#E4DFD5' }}>
               <img
-                src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=700&h=525&fit=crop&auto=format"
+                src={asset('images/plan-cover.jpg')}
                 alt="فريق DT. SHAHAD"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
