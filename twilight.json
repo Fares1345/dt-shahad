@@ -1,274 +1,274 @@
 {
-  "type": "react",
-  "name": {
-    "ar": "dt-shahad",
-    "en": "dt-shahad"
-  },
-  "repository": "https://github.com/Fares1345/dt-shahad",
-  "author_email": "farsalbkyry681@gmail.com",
-  "description": {
-    "ar": "قالب متجر DT. SHAHAD — خطط تغذية شخصية مصممة خصيصًا لك",
-    "en": "DT. SHAHAD store theme — personalized nutrition plans designed for you"
-  },
-  "features": [
-    "mega-menu",
-    "fonts",
-    "color",
-    "breadcrumb",
-    "unite-cards-height",
-    "component-featured-products",
-    "component-fixed-banner",
-    "component-fixed-products",
-    "component-products-slider",
-    "component-photos-slider",
-    "component-parallax-background",
-    "component-testimonials",
-    "component-square-photos",
-    "component-store-features",
-    "component-youtube",
-    "menu-images",
-    "filters"
-  ],
-  "settings": [
-    {
-      "type": "static",
-      "format": "title",
-      "id": "static-label-general",
-      "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> خيارات عامة</h6></div>",
-      "variant": "h6"
+    "type": "react",
+    "name": {
+        "ar": "dt-shahad",
+        "en": "dt-shahad"
     },
-    {
-      "type": "boolean",
-      "id": "is_more_button_enabled",
-      "label": "عرض (زر الكل) في الصفحة الرئيسية",
-      "format": "switch",
-      "required": false,
-      "value": true,
-      "selected": true
+    "repository": "https://github.com/Fares1345/dt-shahad",
+    "author_email": "support@salla.sa",
+    "description": {
+        "ar": "مجموعة كبيرة من المزايا لدعم تجارتك وتقديم تجربة تسوق مثيرة لعملائك",
+        "en": "A wide range of features to support your business and provide an exciting shopping experience for your customers"
     },
-    {
-      "type": "boolean",
-      "icon": "sicon-toggle-off",
-      "label": "تفعيل إشعار الإضافة للسلة المحسن",
-      "description": null,
-      "id": "enable_add_product_toast",
-      "format": "switch",
-      "required": false,
-      "value": true,
-      "selected": true
-    },
-    {
-      "type": "boolean",
-      "icon": "sicon-toggle-off",
-      "label": "اظهار الوسوم",
-      "description": null,
-      "id": "show_tags",
-      "format": "switch",
-      "required": false,
-      "value": true,
-      "selected": true
-    },
-    {
-      "type": "static",
-      "id": "static-line1",
-      "format": "line"
-    },
-    {
-      "type": "static",
-      "format": "title",
-      "id": "static-label-product",
-      "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> خيارات صفحة المنتج</h6></div>",
-      "variant": "h6"
-    },
-    {
-      "type": "boolean",
-      "icon": "sicon-toggle-off",
-      "label": "إظهار مسار التنقل في صفحة المنتج",
-      "description": null,
-      "id": "product_show_breadcrumbs",
-      "format": "switch",
-      "required": false,
-      "value": true,
-      "selected": true
-    },
-    {
-      "type": "boolean",
-      "icon": "sicon-toggle-off",
-      "label": "إظهار مسار التنقل في صفحة قائمة المنتجات",
-      "description": null,
-      "id": "product_index_show_breadcrumbs",
-      "format": "switch",
-      "required": false,
-      "value": true,
-      "selected": true
-    },
-    {
-      "type": "boolean",
-      "icon": "sicon-toggle-off",
-      "label": "إظهار زر \"أعلمني عند التوفر\" في بطاقة المنتج",
-      "description": "يظهر زر إشعار التوفر في بطاقات المنتجات التي نفذت كميتها",
-      "id": "notify_when_available_in_card",
-      "format": "switch",
-      "required": false,
-      "value": true,
-      "selected": true
-    },
-    {
-      "type": "boolean",
-      "icon": "sicon-toggle-off",
-      "label": "تثبيت زر الإضافة والكمية أسفل شاشة الجوال",
-      "description": null,
-      "id": "sticky_add_to_cart",
-      "format": "switch",
-      "required": false,
-      "value": true,
-      "selected": true
-    }
-  ],
-  "components": [
-    {
-      "key": "2f8a1c4e-9b3d-4f2a-8c1e-a7d5b6c3d0e1",
-      "title": {
-        "en": "Home hero",
-        "ar": "مقدمة الصفحة الرئيسية"
-      },
-      "icon": "sicon-image",
-      "path": "home.dt-hero",
-      "is_default": true,
-      "fields": [
+    "features": [
+        "mega-menu",
+        "fonts",
+        "color",
+        "breadcrumb",
+        "unite-cards-height",
+        "component-featured-products",
+        "component-fixed-banner",
+        "component-fixed-products",
+        "component-products-slider",
+        "component-photos-slider",
+        "component-parallax-background",
+        "component-testimonials",
+        "component-square-photos",
+        "component-store-features",
+        "component-youtube",
+        "menu-images",
+        "filters"
+    ],
+    "settings": [
         {
-          "type": "string",
-          "icon": "sicon-format-text-alt",
-          "label": "النص المميز (الشارة)",
-          "multilanguage": true,
-          "id": "badge",
-          "value": "خطط غذائية مخصصة ٠١٠٠٪",
-          "required": false,
-          "format": "text",
-          "description": null,
-          "placeholder": null,
-          "minLength": 0,
-          "maxLength": 80
+            "type": "static",
+            "format": "title",
+            "id": "static-label-general",
+            "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> خيارات عامة</h6></div>",
+            "variant": "h6"
         },
         {
-          "type": "string",
-          "icon": "sicon-format-text-alt",
-          "label": "العنوان الرئيسي",
-          "multilanguage": true,
-          "id": "title",
-          "value": "تغذية مصممة\nلحياتك",
-          "required": false,
-          "format": "text",
-          "description": "يُعرض الجزء الثاني من العنوان (بعد سطر جديد) بلون مميز",
-          "placeholder": "أدخل العنوان هنا...",
-          "minLength": 0,
-          "maxLength": 120
+            "type": "boolean",
+            "id": "is_more_button_enabled",
+            "label": "عرض (زر الكل) في الصفحة الرئيسية",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
         },
         {
-          "type": "string",
-          "icon": "sicon-typography",
-          "label": "النص التوضيحي",
-          "multilanguage": true,
-          "id": "subtitle",
-          "value": "خطط غذائية مدروسة تساعدك على بناء أسلوب حياة أكثر توازنًا، بطريقة تناسب احتياجاتك وروتينك اليومي.",
-          "required": false,
-          "format": "textarea",
-          "description": null,
-          "placeholder": "أدخل النص التوضيحي هنا...",
-          "minLength": 0,
-          "maxLength": 255
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
+            "label": "تفعيل إشعار الإضافة للسلة المحسن",
+            "description": null,
+            "id": "enable_add_product_toast",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
         },
         {
-          "type": "string",
-          "icon": "sicon-image",
-          "label": "صورة الواجهة",
-          "id": "image",
-          "value": "/assets/images/hero.jpg",
-          "required": false,
-          "format": "image",
-          "placeholder": null,
-          "description": "المقاس المناسب هو 4:5 — إذا تُركت فارغة تظهر صورة أول منتج تلقائيًا",
-          "settings": {
-            "width": 800,
-            "height": 1000
-          }
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
+            "label": "اظهار الوسوم",
+            "description": null,
+            "id": "show_tags",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "type": "static",
+            "id": "static-line1",
+            "format": "line"
+        },
+        {
+            "type": "static",
+            "format": "title",
+            "id": "static-label-product",
+            "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> خيارات صفحة المنتج</h6></div>",
+            "variant": "h6"
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
+            "label": "إظهار مسار التنقل في صفحة المنتج",
+            "description": null,
+            "id": "product_show_breadcrumbs",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
+            "label": "إظهار مسار التنقل في صفحة قائمة المنتجات",
+            "description": null,
+            "id": "product_index_show_breadcrumbs",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
+            "label": "إظهار زر \"أعلمني عند التوفر\" في بطاقة المنتج",
+            "description": "يظهر زر إشعار التوفر في بطاقات المنتجات التي نفذت كميتها",
+            "id": "notify_when_available_in_card",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
+            "label": "تثبيت زر الإضافة والكمية أسفل شاشة الجوال",
+            "description": null,
+            "id": "sticky_add_to_cart",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
         }
-      ]
-    },
-    {
-      "key": "3a9b2d5f-6c7e-4f8a-9b0c-1d2e3f4a5b6c",
-      "title": {
-        "en": "DT. SHAHAD packages",
-        "ar": "باقات DT. SHAHAD"
-      },
-      "icon": "sicon-packed-box",
-      "path": "home.dt-packages",
-      "is_default": true,
-      "fields": [
+    ],
+    "components": [
         {
-          "type": "string",
-          "icon": "sicon-format-text-alt",
-          "label": "عنوان القسم",
-          "multilanguage": true,
-          "id": "title",
-          "value": "٤ باقات، وخطة تناسبك",
-          "required": false,
-          "format": "text",
-          "description": null,
-          "placeholder": "أدخل العنوان هنا...",
-          "minLength": 0,
-          "maxLength": 100
+            "key": "2f8a1c4e-9b3d-4f2a-8c1e-a7d5b6c3d0e1",
+            "title": {
+                "en": "Home hero",
+                "ar": "مقدمة الصفحة الرئيسية"
+            },
+            "icon": "sicon-image",
+            "path": "home.dt-hero",
+            "is_default": true,
+            "fields": [
+                {
+                    "type": "string",
+                    "icon": "sicon-format-text-alt",
+                    "label": "النص المميز (الشارة)",
+                    "multilanguage": true,
+                    "id": "badge",
+                    "value": "خطط غذائية مخصصة ٠١٠٠٪",
+                    "required": false,
+                    "format": "text",
+                    "description": null,
+                    "placeholder": null,
+                    "minLength": 0,
+                    "maxLength": 80
+                },
+                {
+                    "type": "string",
+                    "icon": "sicon-format-text-alt",
+                    "label": "العنوان الرئيسي",
+                    "multilanguage": true,
+                    "id": "title",
+                    "value": "تغذية مصممة\nلحياتك",
+                    "required": false,
+                    "format": "text",
+                    "description": "يُعرض الجزء الثاني من العنوان (بعد سطر جديد) بلون مميز",
+                    "placeholder": "أدخل العنوان هنا...",
+                    "minLength": 0,
+                    "maxLength": 120
+                },
+                {
+                    "type": "string",
+                    "icon": "sicon-typography",
+                    "label": "النص التوضيحي",
+                    "multilanguage": true,
+                    "id": "subtitle",
+                    "value": "خطط غذائية مدروسة تساعدك على بناء أسلوب حياة أكثر توازنًا، بطريقة تناسب احتياجاتك وروتينك اليومي.",
+                    "required": false,
+                    "format": "textarea",
+                    "description": null,
+                    "placeholder": "أدخل النص التوضيحي هنا...",
+                    "minLength": 0,
+                    "maxLength": 255
+                },
+                {
+                    "type": "string",
+                    "icon": "sicon-image",
+                    "label": "صورة الواجهة",
+                    "id": "image",
+                    "value": "/assets/images/hero.jpg",
+                    "required": false,
+                    "format": "image",
+                    "placeholder": null,
+                    "description": "المقاس المناسب هو 4:5 — إذا تُركت فارغة تظهر صورة أول منتج تلقائيًا",
+                    "settings": {
+                        "width": 800,
+                        "height": 1000
+                    }
+                }
+            ]
         },
         {
-          "type": "string",
-          "icon": "sicon-typography",
-          "label": "نص توضيحي",
-          "multilanguage": true,
-          "id": "subtitle",
-          "value": "اختر المدة التي تناسب أهدافك، وابدأ رحلتك مع خطة تغذية علاجية مصممة خصيصًا لك.",
-          "required": false,
-          "format": "textarea",
-          "description": null,
-          "placeholder": "أدخل النص هنا...",
-          "minLength": 0,
-          "maxLength": 255
-        },
-        {
-          "type": "items",
-          "icon": "sicon-keyboard_arrow_down",
-          "label": "المنتجات المعروضة",
-          "id": "products",
-          "format": "dropdown-list",
-          "description": "اختر منتجات المتجر التي تظهر كباقات. إذا تُركت فارغة تُعرض أحدث المنتجات تلقائيًا",
-          "labelHTML": null,
-          "selected": [],
-          "options": [],
-          "source": "products",
-          "multichoice": true,
-          "searchable": true,
-          "required": false,
-          "maxLength": 8,
-          "minLength": 0,
-          "value": []
-        },
-        {
-          "type": "items",
-          "icon": "sicon-keyboard_arrow_down",
-          "label": "الباقة المميزة (الأكثر طلبًا)",
-          "id": "featured",
-          "format": "dropdown-list",
-          "description": "منتج واحد يظهر مميزًا مع شارة «الأكثر طلبًا»",
-          "labelHTML": null,
-          "selected": [],
-          "options": [],
-          "source": "products",
-          "multichoice": false,
-          "searchable": true,
-          "required": false,
-          "value": []
+            "key": "3a9b2d5f-6c7e-4f8a-9b0c-1d2e3f4a5b6c",
+            "title": {
+                "en": "DT. SHAHAD packages",
+                "ar": "باقات DT. SHAHAD"
+            },
+            "icon": "sicon-packed-box",
+            "path": "home.dt-packages",
+            "is_default": true,
+            "fields": [
+                {
+                    "type": "string",
+                    "icon": "sicon-format-text-alt",
+                    "label": "عنوان القسم",
+                    "multilanguage": true,
+                    "id": "title",
+                    "value": "٤ باقات، وخطة تناسبك",
+                    "required": false,
+                    "format": "text",
+                    "description": null,
+                    "placeholder": "أدخل العنوان هنا...",
+                    "minLength": 0,
+                    "maxLength": 100
+                },
+                {
+                    "type": "string",
+                    "icon": "sicon-typography",
+                    "label": "نص توضيحي",
+                    "multilanguage": true,
+                    "id": "subtitle",
+                    "value": "اختر المدة التي تناسب أهدافك، وابدأ رحلتك مع خطة تغذية علاجية مصممة خصيصًا لك.",
+                    "required": false,
+                    "format": "textarea",
+                    "description": null,
+                    "placeholder": "أدخل النص هنا...",
+                    "minLength": 0,
+                    "maxLength": 255
+                },
+                {
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": "المنتجات المعروضة",
+                    "id": "products",
+                    "format": "dropdown-list",
+                    "description": "اختر منتجات المتجر التي تظهر كباقات. إذا تُركت فارغة تُعرض أحدث المنتجات تلقائيًا",
+                    "labelHTML": null,
+                    "selected": [],
+                    "options": [],
+                    "source": "products",
+                    "multichoice": true,
+                    "searchable": true,
+                    "required": false,
+                    "maxLength": 8,
+                    "minLength": 0,
+                    "value": []
+                },
+                {
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": "الباقة المميزة (الأكثر طلبًا)",
+                    "id": "featured",
+                    "format": "dropdown-list",
+                    "description": "منتج واحد يظهر مميزًا مع شارة «الأكثر طلبًا»",
+                    "labelHTML": null,
+                    "selected": [],
+                    "options": [],
+                    "source": "products",
+                    "multichoice": false,
+                    "searchable": true,
+                    "required": false,
+                    "value": []
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "support_url": "https://salla.com/"
+    ],
+    "support_url": "https://salla.com/"
 }
