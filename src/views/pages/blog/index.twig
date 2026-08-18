@@ -1,0 +1,48 @@
+{#
+| Variable    | Type          | Description                  |
+| blog        | object        | blog.articles (collection)   |
+| blog.articles[].id, .title, .url, .featured_image, .created_at, .excerpt ... |
+#}
+{% extends "layouts.master" %}
+
+{% block title %}{{ 'المدونة' }}{% endblock %}
+
+{% block content %}
+    <div class="dt-blog">
+        <div class="dt-blog__head">
+            <span class="dt-packages__eyebrow">المدونة</span>
+            <h1 class="dt-blog__title">أحدث المقالات</h1>
+            <p class="dt-blog__subtitle">نصائح وموضوعات في التغذية العلاجية وأسلوب الحياة الصحي.</p>
+        </div>
+
+        {% set dt_articles = blog.articles is defined and blog.articles ? blog.articles : [] %}
+
+        {% if dt_articles|length %}
+            <div class="dt-blog__grid">
+                {% for article in dt_articles %}
+                    <article class="dt-blog-card">
+                        {% if article.featured_image is defined and article.featured_image %}
+                            <a href="{{ article.url }}" class="dt-blog-card__media">
+                                <img src="{{ article.featured_image }}" alt="{{ article.title }}" loading="lazy" class="dt-blog-card__img">
+                            </a>
+                        {% endif %}
+                        <div class="dt-blog-card__body">
+                            {% if article.created_at is defined and article.created_at %}
+                                <time class="dt-blog-card__date">{{ article.created_at|date('j F Y') }}</time>
+                            {% endif %}
+                            <h2 class="dt-blog-card__title">
+                                <a href="{{ article.url }}">{{ article.title }}</a>
+                            </h2>
+                            {% if article.excerpt is defined and article.excerpt %}
+                                <p class="dt-blog-card__excerpt">{{ article.excerpt }}</p>
+                            {% endif %}
+                            <a href="{{ article.url }}" class="dt-blog-card__more">اقرأ المزيد ←</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="dt-blog__empty">لا توجد مقالات بعد.</p>
+        {% endif %}
+    </div>
+{% endblock %}

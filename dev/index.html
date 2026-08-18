@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DT. SHAHAD — Static Preview (outside Salla)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Cairo:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Cinzel:wght@500;600&family=Noto+Serif+Arabic:wght@500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../public/app.css">
+
+    <style>
+        :root {
+            --color-primary: #5A6340;
+            --color-primary-dark: #3D472E;
+            --color-primary-light: #7C8A63;
+            --color-primary-reverse: #FFFFFF;
+        }
+        body.dt-shahad { font-family: 'Tajawal', sans-serif; }
+        .dt-logo-mark { width: 104px; }
+        .dt-logo--white { filter: brightness(0) invert(1); opacity: 0.94; }
+    </style>
+</head>
+<body id="app" class="dt-shahad">
+    <div class="app-inner">
+
+        <!-- ═══ HEADER — port of src/views/partials/header.twig ═══ -->
+        <header class="dt-header" data-testid="store-header">
+            <input type="checkbox" id="dt-menu-toggle" class="dt-menu-toggle" aria-hidden="true">
+            <div class="dt-header__inner">
+                <a href="#" class="dt-logo-link" aria-label="الرئيسية">
+                    <img src="logo.svg" alt="DT. SHAHAD" style="width: 96px; display: block;">
+                </a>
+                <nav class="dt-nav" aria-label="التنقل الرئيسي">
+                    <a href="#" class="dt-nav__link is-active">الرئيسية</a>
+                    <a href="#packages" class="dt-nav__link">الباقات</a>
+                    <a href="#" class="dt-nav__link">من نحن</a>
+                    <a href="#" class="dt-nav__link">المدونة</a>
+                </nav>
+                <div class="dt-header__actions">
+                    <a href="#" class="dt-icon-btn" aria-label="بحث">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                    </a>
+                    <a href="#" class="dt-icon-btn" aria-label="سلة التسوق">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+                        <span class="dt-cart-badge" style="display: none;"><span>0</span></span>
+                    </a>
+                    <a href="#" class="dt-icon-btn" aria-label="الحساب">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </a>
+                    <label for="dt-menu-toggle" class="dt-menu-btn" role="button" aria-label="فتح القائمة">
+                        <svg class="dt-menu-icon dt-menu-icon--burger" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg>
+                        <svg class="dt-menu-icon dt-menu-icon--close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                    </label>
+                </div>
+            </div>
+            <div class="dt-mobile-menu">
+                <nav aria-label="القائمة">
+                    <a href="#" class="dt-mobile-menu__link">الرئيسية</a>
+                    <a href="#packages" class="dt-mobile-menu__link">الباقات</a>
+                    <a href="#" class="dt-mobile-menu__link">من نحن</a>
+                    <a href="#" class="dt-mobile-menu__link">المدونة</a>
+                </nav>
+            </div>
+        </header>
+
+        <main id="main-content" role="main">
+
+            <!-- ═══ HERO — port of src/views/components/home/dt-hero.twig ═══ -->
+            <section class="dt-hero hero-grid" data-testid="store-home-dt-hero">
+                <div class="dt-hero__content">
+                    <div class="dt-hero__badge"><span class="dt-hero__badge-dot"></span><span class="dt-hero__badge-text">خطط غذائية مخصصة ٠١٠٠٪</span></div>
+                    <h1 class="dt-hero__title">تغذية مصممة<br><span class="dt-hero__accent">لحياتك</span></h1>
+                    <p class="dt-hero__subtitle">خطط غذائية مدروسة تساعدك على بناء أسلوب حياة أكثر توازنًا، بطريقة تناسب احتياجاتك وروتينك اليومي.</p>
+                    <div class="dt-hero__cta">
+                        <a class="dt-hero__btn dt-hero__btn--primary" href="#packages">اختر باقتك</a>
+                        <a class="dt-hero__btn dt-hero__btn--ghost" href="#">اكتشف DT. SHAHAD</a>
+                    </div>
+                    <div class="dt-hero__stats">
+                        <div class="dt-hero__stat"><div class="dt-hero__stat-num">٤</div><div class="dt-hero__stat-label">باقات متخصصة</div></div>
+                        <div class="dt-hero__stat"><div class="dt-hero__stat-num">٢٤</div><div class="dt-hero__stat-label">منتج في المتجر</div></div>
+                    </div>
+                </div>
+                <div class="dt-hero__media">
+                    <div class="dt-hero__frame"><img src="../public/assets/images/hero.jpg" alt="خطة غذائية متوازنة" class="dt-hero__img"></div>
+                    <div class="dt-hero__float">
+                        <div class="dt-hero__float-label">خطتك الغذائية جاهزة</div>
+                        <div class="dt-hero__float-title">أسبوع ١ — يبدأ اليوم</div>
+                        <div class="dt-hero__float-meals">
+                            <span class="dt-hero__float-meal">وجبة الفطور</span>
+                            <span class="dt-hero__float-meal">الغداء</span>
+                            <span class="dt-hero__float-meal">العشاء</span>
+                        </div>
+                    </div>
+                    <div class="dt-hero__logo-mark"><img src="logo.svg" alt="DT. SHAHAD" class="dt-logo--white" style="width: 88px; display: block;"></div>
+                </div>
+            </section>
+
+            <!-- ═══ PACKAGES — port of dt-packages.twig fallback cards ═══ -->
+            <section class="dt-packages" id="packages" data-testid="store-home-dt-packages">
+                <div class="dt-packages__inner">
+                    <div class="dt-packages__head reveal">
+                        <span class="dt-packages__eyebrow">الباقات</span>
+                        <h2 class="dt-packages__title">٤ باقات، وخطة تناسبك</h2>
+                        <p class="dt-packages__subtitle">اختر المدة التي تناسب أهدافك، وابدأ رحلتك مع خطة تغذية علاجية مصممة خصيصًا لك.</p>
+                    </div>
+                    <div class="packages-grid" id="packages-grid"></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ═══ FOOTER — port of src/views/partials/footer.twig ═══ -->
+        <footer class="dt-footer" data-testid="store-footer">
+            <div class="dt-footer__inner">
+                <div class="dt-footer__grid">
+                    <div class="dt-footer__brand">
+                        <div class="dt-footer__logo"><img src="logo.svg" alt="DT. SHAHAD" class="dt-logo--white" style="width: 160px; display: block;"></div>
+                        <p class="dt-footer__tagline">تغذية مصممة لحياتك. خطط غذائية مدروسة تساعدك على بناء أسلوب حياة أكثر توازنًا.</p>
+                        <div class="dt-footer__social">
+                            <a href="#" aria-label="instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+                            <a href="#" aria-label="tiktok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg></a>
+                            <a href="#" aria-label="youtube"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.92 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a>
+                            <a href="#" aria-label="whatsapp"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></a>
+                            <a href="#" aria-label="facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+                        </div>
+                    </div>
+                    <div class="dt-footer__nav">
+                        <h4 class="dt-footer__heading">التنقل</h4>
+                        <a class="dt-footer__link" href="#">الرئيسية</a>
+                        <a class="dt-footer__link" href="#packages">الباقات</a>
+                        <a class="dt-footer__link" href="#">من نحن</a>
+                        <a class="dt-footer__link" href="#">المدونة</a>
+                    </div>
+                    <div class="dt-footer__contact">
+                        <h4 class="dt-footer__heading">تواصل معنا</h4>
+                        <div class="dt-contact-row"><span class="dt-contact-row__icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></span><a class="dt-contact-row__link" href="mailto:hello@dtshahad.com">hello@dtshahad.com</a></div>
+                        <div class="dt-contact-row"><span class="dt-contact-row__icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></span><a class="dt-contact-row__link" href="tel:0550000000">0550000000</a></div>
+                        <div class="dt-contact-row"><span class="dt-contact-row__icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></span><a class="dt-contact-row__link" href="https://wa.me/966550000000">966550000000</a></div>
+                    </div>
+                </div>
+                <div class="dt-footer__divider"></div>
+                <div class="dt-footer__bottom">
+                    <p class="dt-footer__copyright">© 2026 DT. SHAHAD. جميع الحقوق محفوظة.</p>
+                    <p class="dt-footer__powered">مدعوم بـ Salla</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const packages = [
+            { name: 'باقة الابتداء', duration: 'شهر واحد', price: '٣٩٩ ر.س', old: null, featured: false, benefits: ['خطة غذائية شهرية متكاملة', 'متابعة أسبوعية', 'تعديلات على الخطة'] },
+            { name: 'باقة التقدم', duration: '٣ أشهر', price: '٧٩٩ ر.س', old: '٩٩٩ ر.س', featured: true, benefits: ['كل مزايا باقة الابتداء', 'متابعة أسبوعية مكثفة', 'استشارة مباشرة شهرية'] },
+            { name: 'باقة الالتزام', duration: '٦ أشهر', price: '١٤٩٩ ر.س', old: '١٩٩٩ ر.س', featured: false, benefits: ['كل مزايا باقة التقدم', 'متابعة أسبوعية مكثفة', 'خطة رياضية مصاحبة'] },
+            { name: 'باقة الاستمرار', duration: '١٢ شهرًا', price: '٢٤٩٩ ر.س', old: '٣٢٩٩ ر.س', featured: false, benefits: ['كل مزايا باقة الالتزام', 'متابعة يومية', 'أولوية في الحجز والاستشارات'] }
+        ];
+        const check = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5A6340" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>';
+        const grid = document.getElementById('packages-grid');
+        grid.innerHTML = packages.map(p => `
+            <article class="dt-package-card${p.featured ? ' dt-package-card--featured' : ''}">
+                ${p.featured ? '<span class="dt-package-badge">الأكثر طلبًا</span>' : ''}
+                <div class="dt-package-logo"><img src="logo.svg" alt="DT. SHAHAD" style="width: 104px; display: block;"></div>
+                <h3 class="dt-package-name">${p.name}</h3>
+                <div class="dt-package-duration">${p.duration}</div>
+                <div class="dt-package-divider"></div>
+                <ul class="dt-package-benefits">${p.benefits.map(b => `<li class="dt-package-benefit">${check}<span>${b}</span></li>`).join('')}</ul>
+                <div class="dt-package-price">${p.old ? `<span class="dt-package-price__old">${p.old}</span>` : ''}<span class="dt-package-price__value">${p.price}</span></div>
+                <button type="button" class="dt-package-cta${p.featured ? ' dt-package-cta--featured' : ''}">اختر الباقة</button>
+                <a class="dt-package-details" href="#">تفاصيل الباقة ←</a>
+            </article>`).join('');
+    </script>
+</body>
+</html>

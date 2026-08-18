@@ -1,0 +1,22 @@
+<svg viewBox="0 0 600 620" role="img" aria-label="DT. SHAHAD — Clinical Nutrition" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <path d="M330 402 C 372 356 430 306 462 236" fill="none" stroke="#7C8A63" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M0 0 C 17.68 -17.16 38.48 -17.16 52 0 C 38.48 17.16 17.68 17.16 0 0 Z" transform="translate(348.47 382.40) rotate(-98.09)" fill="#7C8A63"/>
+    <path d="M0 0 C 17.68 -17.16 38.48 -17.16 52 0 C 38.48 17.16 17.68 17.16 0 0 Z" transform="translate(348.47 382.40) rotate(5.91)" fill="#9CA982"/>
+    <path d="M0 0 C 15.98 -15.51 34.78 -15.51 47 0 C 34.78 15.51 15.98 15.51 0 0 Z" transform="translate(370.99 359.09) rotate(-98.18)" fill="#7C8A63"/>
+    <path d="M0 0 C 15.98 -15.51 34.78 -15.51 47 0 C 34.78 15.51 15.98 15.51 0 0 Z" transform="translate(370.99 359.09) rotate(5.82)" fill="#9CA982"/>
+    <path d="M0 0 C 14.28 -13.86 31.08 -13.86 42 0 C 31.08 13.86 14.28 13.86 0 0 Z" transform="translate(394.03 334.42) rotate(-99.97)" fill="#9CA982"/>
+    <path d="M0 0 C 14.28 -13.86 31.08 -13.86 42 0 C 31.08 13.86 14.28 13.86 0 0 Z" transform="translate(394.03 334.42) rotate(4.03)" fill="#9CA982"/>
+    <path d="M0 0 C 12.58 -12.21 27.38 -12.21 37 0 C 27.38 12.21 12.58 12.21 0 0 Z" transform="translate(416.56 308.01) rotate(-103.34)" fill="#9CA982"/>
+    <path d="M0 0 C 12.58 -12.21 27.38 -12.21 37 0 C 27.38 12.21 12.58 12.21 0 0 Z" transform="translate(416.56 308.01) rotate(0.66)" fill="#9CA982"/>
+    <path d="M0 0 C 10.88 -10.56 23.68 -10.56 32 0 C 23.68 10.56 10.88 10.56 0 0 Z" transform="translate(437.55 279.47) rotate(-108.25)" fill="#9CA982"/>
+    <path d="M0 0 C 10.88 -10.56 23.68 -10.56 32 0 C 23.68 10.56 10.88 10.56 0 0 Z" transform="translate(437.55 279.47) rotate(-4.25)" fill="#9CA982"/>
+    <path d="M0 0 C 13.60 -13.00 29.60 -13.00 40 0 C 29.60 13.00 13.60 13.00 0 0 Z" transform="translate(461.52 237.05) rotate(-65.43)" fill="#9CA982"/>
+  </g>
+  <text x="298" y="298" text-anchor="middle" dominant-baseline="middle" fill="#3D472E" style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 360px; font-style: italic;">S</text>
+  <text x="300" y="470" text-anchor="middle" fill="#3D472E" style="font-family: 'Cinzel', serif; font-weight: 600; font-size: 82px; letter-spacing: 6px;">DT. SHAHAD</text>
+  <line x1="58" y1="510" x2="108" y2="510" stroke="#3D472E" stroke-width="1.6"/>
+  <line x1="492" y1="510" x2="542" y2="510" stroke="#3D472E" stroke-width="1.6"/>
+  <text x="300" y="519" text-anchor="middle" fill="#3D472E" style="font-family: 'Cinzel', serif; font-weight: 500; font-size: 24px; letter-spacing: 4px;">CLINICAL NUTRITION</text>
+  <text x="300" y="575" text-anchor="middle" direction="rtl" fill="#3D472E" style="font-family: 'Noto Serif Arabic', serif; font-weight: 500; font-size: 38px;">أخصائية تغذية علاجية</text>
+</svg>
