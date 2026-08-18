@@ -27,9 +27,9 @@
                     <circle cx="19" cy="21" r="1"></circle>
                     <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
                 </svg>
-                {% if cart.items_count > 0 %}
-                    <span class="dt-cart-badge">{{ cart.items_count }}</span>
-                {% endif %}
+                <span class="dt-cart-badge" id="dt-cart-badge"{% if cart.items_count == 0 %} style="display: none;"{% endif %}>
+                    <span id="dt-cart-count">{{ cart.items_count }}</span>
+                </span>
             </a>
             <a href="{{ link('/customer/profile') }}" class="dt-icon-btn" aria-label="الحساب">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -57,3 +57,49 @@
         </nav>
     </div>
 </header>
+
+<script data-cfasync="false">
+    (function () {
+        var inited = false;
+        function init() {
+            if (inited) return;
+            inited = true;
+            var salla = window.salla;
+            if (!salla) return;
+            var badge = document.getElementById('dt-cart-badge');
+            var countEl = document.getElementById('dt-cart-count');
+            if (!badge || !countEl) return;
+
+            function refresh() {
+                var summary = salla.storage && typeof salla.storage.get === 'function'
+                    ? salla.storage.get('cart.summary')
+                    : null;
+                var count = summary && typeof summary.count === 'number' ? summary.count : 0;
+                countEl.textContent = count;
+                badge.style.display = count > 0 ? 'flex' : 'none';
+            }
+
+            var cartEvents = salla.cart && salla.cart.event
+                ? salla.cart.event
+                : (salla.event && salla.event.cart) || null;
+            ['onItemAdded', 'onItemDeleted', 'onItemUpdated', 'onUpdated', 'onLatestFetched'].forEach(function (name) {
+                if (cartEvents && typeof cartEvents[name] === 'function') {
+                    cartEvents[name](refresh);
+                }
+            });
+
+            refresh();
+        }
+
+        if (document.readyState !== 'loading') {
+            init();
+        } else {
+            document.addEventListener('DOMContentLoaded', init);
+        }
+        if (window.salla && typeof salla.onReady === 'function') {
+            salla.onReady(init);
+        } else {
+            document.addEventListener('theme::ready', init, { once: true });
+        }
+    })();
+</script>

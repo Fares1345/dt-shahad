@@ -24,6 +24,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         app: path.resolve(rootDir, 'app/styles/entry.ts'),
+        'packages-card': path.resolve(rootDir, 'app/scripts/packages-card.js'),
       },
       output: {
         entryFileNames: 'assets/[name].js',

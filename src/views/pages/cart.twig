@@ -1,0 +1,101 @@
+{#
+| Variable                        | Type              | Description                                          |
+|---------------------------------|-------------------|------------------------------------------------------|
+| cart.id                         | int               |                                                      |
+| cart.is_require_shipping        | bool              |                                                      |
+| cart.has_shipping               | bool              | Does shipping company selected?                      |
+| cart.real_shipping_cost         | float             | Shipping cost can become free by an offer, coupon    |
+| cart.sub_total                  | float             | The sum of items price without shipping or other costs |
+| cart.discount                   | float             | final discount                                       |
+| cart.coupon                     | ?string           |                                                      |
+| cart.total                      | float             |                                                      |
+| cart.tax_amount                 | float             | Calculate Tax amount                                 |
+| cart.items[].id                 | int               |                                                      |
+| cart.items[].product_id         | int               |                                                      |
+| cart.items[].product_name       | string            |                                                      |
+| cart.items[].product_image      | string            |                                                      |
+| cart.items[].url                | string            | Product url                                          |
+| cart.items[].quantity           | int               |                                                      |
+| cart.items[].max_quantity       | int               |                                                      |
+| cart.items[].is_hidden_quantity | bool              |                                                      |
+| cart.items[].type               | string            | product type                                         |
+| cart.items[].price              | Money             | Item price                                           |
+| cart.items[].total              | Money             | Item total (price × quantity)                        |
+| cart.free_shipping_bar          | ?object           |                                                      |
+| cart.free_shipping_bar.minimum_amount | float        |                                                      |
+| cart.free_shipping_bar.has_free_shipping | bool     |                                                      |
+| cart.free_shipping_bar.percent  | float             | `0 - 100`                                            |
+| cart.free_shipping_bar.remaining | float            |                                                      |
+#}
+{% extends "layouts.master" %}
+
+{% block content %}
+    <div class="dt-cart">
+        <div class="dt-cart__container">
+            <h1 class="dt-cart__title">سلة التسوق</h1>
+
+            {% if cart.items|length %}
+                {% if cart.free_shipping_bar %}
+                    <div class="dt-cart__shipping-bar" data-testid="store-cart-free-shipping">
+                        <div class="dt-cart__shipping-head">
+                            <span class="dt-cart__shipping-title">الشحن المجاني</span>
+                            <span class="dt-cart__shipping-msg">
+                                {% if cart.free_shipping_bar.has_free_shipping %}
+                                    حصلت على شحن مجاني
+                                {% else %}
+                                    أضف {{ cart.free_shipping_bar.remaining|money }} للحصول على شحن مجاني
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="dt-cart__shipping-track">
+                            <span class="dt-cart__shipping-fill" style="width: {{ cart.free_shipping_bar.percent }}%"></span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="dt-cart__grid">
+                    <div class="dt-cart__items">
+                        {% for item in cart.items %}
+                            <form onchange="salla.form.onChange('cart.updateItem', event)" id="item-{{ item.id }}"
+                                  class="dt-cart-item" data-testid="store-cart-item-{{ item.id }}">
+                                <input type="hidden" name="id" value="{{ item.id }}">
+
+                                <a href="{{ item.url }}" class="dt-cart-item__thumb">
+                                    <img src="{{ item.product_image }}" alt="{{ item.product_name }}" loading="lazy">
+                                </a>
+
+                                <div class="dt-cart-item__body">
+                                    <a href="{{ item.url }}" class="dt-cart-item__name">{{ item.product_name }}</a>
+                                    <div class="dt-cart-item__price">{{ item.total|money }}</div>
+                                    {% if item.is_hidden_quantity %}
+                                        <input type="hidden" value="{{ item.quantity }}" name="quantity" aria-label="الكمية">
+                                        <span class="dt-cart-item__qty-static">{{ item.quantity }}</span>
+                                    {% else %}
+                                        <salla-quantity-input cart-item-id="{{ item.id }}" value="{{ item.quantity }}"
+                                                              max="{{ item.max_quantity }}" name="quantity"
+                                                              aria-label="الكمية"></salla-quantity-input>
+                                    {% endif %}
+                                </div>
+
+                                <button type="button" class="dt-cart-item__remove" aria-label="حذف من السلة"
+                                        onclick="salla.cart.deleteItem('{{ item.id }}').then(() => document.querySelector('#item-{{ item.id }}').remove())">✕</button>
+                            </form>
+                        {% endfor %}
+                    </div>
+
+                    <aside class="dt-cart__summary">
+                        {% if store.settings.cart.apply_coupon_enabled %}
+                            <salla-cart-coupons data-testid="store-cart-coupons"></salla-cart-coupons>
+                        {% endif %}
+                        <salla-cart-summary-card data-testid="store-cart-summary"></salla-cart-summary-card>
+                    </aside>
+                </div>
+            {% else %}
+                <div class="dt-cart__empty" data-testid="store-cart-empty">
+                    <p class="dt-cart__empty-text">سلة التسوق فارغة</p>
+                    <a href="{{ link('/') }}" class="dt-btn dt-btn--primary">تصفح الباقات</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

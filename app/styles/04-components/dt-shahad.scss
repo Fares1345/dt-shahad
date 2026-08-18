@@ -792,6 +792,71 @@ img, video {
   color: #3D472E;
 }
 
+/* ── Dynamic products list (salla-products-list) ───────────── */
+
+salla-products-list[data-testid="store-home-dt-packages-list"] {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+  salla-products-list[data-testid="store-home-dt-packages-list"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 560px) {
+  salla-products-list[data-testid="store-home-dt-packages-list"] {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    max-width: 420px;
+    margin-inline: auto;
+  }
+}
+
+/* Native add-to-cart button inside the package card */
+.dt-package-card salla-add-product-button {
+  width: 100%;
+}
+
+.dt-package-card salla-add-product-button[width="wide"] {
+  width: 100%;
+}
+
+.dt-package-card salla-add-product-button .s-btn {
+  width: 100%;
+  padding: 14px 0;
+  background-color: transparent;
+  color: #3D472E;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  border: 1.5px solid #3D472E;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.dt-package-card salla-add-product-button .s-btn:hover:not([disabled]) {
+  background-color: #3D472E;
+  color: #F7F4EE;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(61, 71, 46, 0.28);
+}
+
+.dt-package-card--featured salla-add-product-button .s-btn {
+  background-color: #3D472E;
+  color: #F7F4EE;
+}
+
+.dt-package-card salla-add-product-button .s-btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 /* ── Footer ────────────────────────────────────────────────── */
 
 .dt-footer {
@@ -1011,5 +1076,824 @@ img, video {
 
   .steps-grid {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Product page ───────────────────────────────────────────── */
+
+.dt-product {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 40px) 0;
+}
+
+.dt-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 20px;
+}
+
+.dt-breadcrumb__link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  color: #8A8580;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.dt-breadcrumb__link:hover {
+  color: #1A1917;
+}
+
+.dt-breadcrumb__sep {
+  color: #D4CFCA;
+  font-size: 12px;
+}
+
+.dt-breadcrumb__current {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  color: #1A1917;
+}
+
+.dt-product__grid {
+  padding-top: 40px;
+}
+
+/* Mockup card */
+
+.dt-mockup-wrap {
+  position: sticky;
+  top: 100px;
+}
+
+.dt-mockup-card {
+  background-color: #F0EDE5;
+  border-radius: 16px;
+  padding: clamp(28px, 5vw, 48px);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.12);
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.dt-mockup-card__lines {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background: repeating-linear-gradient(
+    to bottom,
+    #1A1917 0,
+    #1A1917 1px,
+    transparent 1px,
+    transparent 5.5%
+  );
+}
+
+.dt-mockup-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.dt-mockup-card__chip {
+  border: 1px solid rgba(26, 25, 23, 0.15);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(26, 25, 23, 0.5);
+  letter-spacing: 0.08em;
+}
+
+.dt-mockup-card__center {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.dt-mockup-card__logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 1px solid rgba(26, 25, 23, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  color: #1A1917;
+}
+
+.dt-mockup-card__name {
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 600;
+  color: #1A1917;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.dt-mockup-card__duration {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(26, 25, 23, 0.5);
+}
+
+.dt-mockup-card__bottom {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.dt-mockup-card__old {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 11px;
+  color: rgba(26, 25, 23, 0.35);
+  margin-bottom: 4px;
+  text-decoration: line-through;
+}
+
+.dt-mockup-card__price {
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #1A1917;
+  line-height: 1;
+}
+
+.dt-mockup-card__accent-bar {
+  width: 32px;
+  height: 2px;
+  background-color: #5A6340;
+  border-radius: 1px;
+}
+
+.dt-mockup-card__accent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #5A6340;
+}
+
+/* Info */
+
+.dt-product__title {
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 500;
+  color: #1A1917;
+  margin: 0 0 12px;
+  line-height: 1.3;
+}
+
+.dt-product__intro {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 16px;
+  color: #8A8580;
+  line-height: 1.9;
+  margin: 0 0 32px;
+}
+
+.dt-product__form-panel {
+  background-color: #F0ECE4;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 32px;
+  border: 1px solid #E8E3DC;
+}
+
+/* Native product options restyled as design pills */
+
+.dt-product-form salla-product-options .s-product-options-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.dt-product-form salla-product-options .s-product-options-option-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dt-product-form salla-product-options .s-product-options-option-title {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1A1917;
+  margin-bottom: 10px;
+}
+
+.dt-product-form salla-product-options .s-product-options-option-title .required {
+  color: #C4AB6E;
+}
+
+.dt-product-form salla-product-options .s-product-options-option-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #D4CFCA;
+  border-radius: 20px;
+  padding: 7px 16px;
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  color: #2E2C29;
+  background-color: #FBF9F3;
+  transition: border-color 0.2s ease;
+}
+
+.dt-product-form salla-product-options .s-product-options-option-label:hover {
+  border-color: #5A6340;
+}
+
+.dt-product-form salla-product-options .s-product-options-option-label b {
+  font-weight: 500;
+}
+
+.dt-product-form salla-product-options .s-product-options-option-label small {
+  color: #5A6340;
+  font-weight: 600;
+}
+
+.dt-product-form salla-product-options .s-product-options-option-radio:checked ~ .s-product-options-option-label,
+.dt-product-form salla-product-options .s-product-options-option input:checked + .s-product-options-option-label,
+.dt-product-form salla-product-options .s-product-options-option.is-selected .s-product-options-option-label,
+.dt-product-form salla-product-options .s-product-options-option:has(input:checked) .s-product-options-option-label {
+  border-color: #5A6340;
+  box-shadow: inset 0 0 0 1px #5A6340;
+}
+
+.dt-product-form salla-product-options .s-product-options-option-error .s-product-options-option-label {
+  border-color: #B4503F;
+}
+
+.dt-product-form salla-product-options input[type='radio'],
+.dt-product-form salla-product-options input[type='checkbox'] {
+  accent-color: #5A6340;
+  margin: 0;
+}
+
+.dt-product-form salla-product-options .s-product-options-text,
+.dt-product-form salla-product-options .s-product-options-textarea,
+.dt-product-form salla-product-options input[type='text'],
+.dt-product-form salla-product-options input[type='number'],
+.dt-product-form salla-product-options textarea,
+.dt-product-form salla-product-options select {
+  border: 1px solid #D4CFCA;
+  border-radius: 8px;
+  background-color: #FBF9F3;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  color: #2E2C29;
+  padding: 10px 14px;
+}
+
+.dt-product-form salla-product-options .s-product-options-option-message {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 12px;
+  color: #B4503F;
+  margin-top: 8px;
+}
+
+/* Quantity stepper */
+
+.dt-product__qty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #EDE9E0;
+  border-radius: 8px;
+  padding: 6px;
+  margin-bottom: 14px;
+}
+
+.dt-product__qty-label {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  color: #8A8580;
+  padding: 0 10px;
+}
+
+.dt-product__qty salla-quantity-input {
+  display: inline-flex;
+}
+
+.dt-product__qty .s-quantity-input,
+.dt-product__qty salla-quantity-input .s-quantity-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.dt-product__qty salla-quantity-input .s-quantity-input-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #5A6340;
+  font-size: 17px;
+  line-height: 1;
+  padding: 4px 6px;
+  font-family: 'Tajawal', sans-serif;
+}
+
+.dt-product__qty salla-quantity-input .s-quantity-input-input {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1A1917;
+  min-width: 20px;
+  text-align: center;
+  background: transparent;
+  border: none;
+}
+
+/* Price row */
+
+.dt-product__price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.dt-product__price {
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: clamp(28px, 4vw, 34px);
+  font-weight: 600;
+  color: #1A1917;
+  line-height: 1;
+}
+
+.dt-product__old-price {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  color: #8A8580;
+  text-decoration: line-through;
+  margin-bottom: 4px;
+}
+
+.dt-product__duration-chip {
+  background-color: #EDE9E0;
+  color: #5A6340;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 16px;
+  border-radius: 20px;
+}
+
+/* Add to cart button (native salla-button) */
+
+.dt-product-form salla-add-product-button .s-btn,
+.dt-product-form .s-add-product-button {
+  width: 100%;
+  padding: 15px;
+  background-color: #1A1917;
+  color: #F7F4EE;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.dt-product-form salla-add-product-button .s-btn:hover,
+.dt-product-form .s-add-product-button:hover {
+  background-color: #2E2C29;
+}
+
+.dt-product-form salla-add-product-button .s-btn[disabled],
+.dt-product-form .s-add-product-button[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Includes / benefits */
+
+.dt-product__section {
+  margin-bottom: 32px;
+}
+
+.dt-product__h3 {
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1A1917;
+  margin: 0 0 16px;
+}
+
+.dt-includes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dt-includes__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dt-includes__check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #EDE9E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dt-includes__text {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 14.5px;
+  color: #2E2C29;
+  font-weight: 400;
+}
+
+.dt-benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 12px;
+}
+
+.dt-benefits__chip {
+  background-color: #F0ECE4;
+  border-radius: 6px;
+  padding: 14px 16px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13.5px;
+  color: #2E2C29;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dt-benefits__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #5A6340;
+  flex-shrink: 0;
+}
+
+/* FAQ */
+
+.dt-faq {
+  max-width: 860px;
+  width: 100%;
+  margin: 64px auto 0;
+  padding: 0 clamp(20px, 5vw, 40px);
+}
+
+.dt-faq__title {
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: clamp(24px, 4vw, 28px);
+  font-weight: 500;
+  color: #1A1917;
+  margin: 0 0 32px;
+  text-align: center;
+}
+
+.dt-faq__item {
+  border-bottom: 1px solid #E8E3DC;
+  overflow: hidden;
+}
+
+.dt-faq__item[open] .dt-faq__icon {
+  transform: rotate(45deg);
+}
+
+.dt-faq__q {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1A1917;
+  text-align: right;
+  list-style: none;
+}
+
+.dt-faq__q::-webkit-details-marker {
+  display: none;
+}
+
+.dt-faq__icon {
+  color: #8A8580;
+  font-size: 18px;
+  transition: transform 0.25s ease;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.dt-faq__a {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 14.5px;
+  color: #8A8580;
+  line-height: 1.8;
+  margin: 0 0 20px;
+  text-align: right;
+}
+
+/* Related */
+
+.dt-related {
+  max-width: 1280px;
+  width: 100%;
+  margin: 64px auto 0;
+  padding: 0 clamp(20px, 5vw, 40px) 88px;
+}
+
+.dt-related__title {
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: clamp(22px, 4vw, 24px);
+  font-weight: 500;
+  color: #1A1917;
+  margin: 0 0 28px;
+}
+
+/* ── Cart page ──────────────────────────────────────────────── */
+
+.dt-cart__container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px clamp(20px, 5vw, 40px) 88px;
+}
+
+.dt-cart__title {
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 500;
+  color: #1A1917;
+  margin: 0 0 28px;
+}
+
+.dt-cart__shipping-bar {
+  background-color: #F0ECE4;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border: 1px solid #E8E3DC;
+}
+
+.dt-cart__shipping-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.dt-cart__shipping-title {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1A1917;
+}
+
+.dt-cart__shipping-msg {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  color: #5A6340;
+}
+
+.dt-cart__shipping-track {
+  height: 6px;
+  background-color: #E8E3DC;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.dt-cart__shipping-fill {
+  display: block;
+  height: 100%;
+  background-color: #5A6340;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.dt-cart__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 24px;
+  align-items: start;
+}
+
+.dt-cart-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: #F0EDE5;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #E8E3DC;
+}
+
+.dt-cart-item__thumb {
+  width: 96px;
+  height: 96px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: #EDE9E0;
+  display: block;
+}
+
+.dt-cart-item__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.dt-cart-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.dt-cart-item__name {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1A1917;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.dt-cart-item__name:hover {
+  color: #5A6340;
+}
+
+.dt-cart-item__price {
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1A1917;
+}
+
+.dt-cart-item__qty-static {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1A1917;
+}
+
+.dt-cart-item salla-quantity-input .s-quantity-input {
+  display: inline-flex;
+  align-items: center;
+  background-color: #EDE9E0;
+  border-radius: 8px;
+  border: none;
+  overflow: hidden;
+}
+
+.dt-cart-item salla-quantity-input .s-quantity-input-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #5A6340;
+  font-size: 16px;
+  line-height: 1;
+  padding: 8px 12px;
+  font-family: 'Tajawal', sans-serif;
+}
+
+.dt-cart-item salla-quantity-input .s-quantity-input-input {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1917;
+  width: 40px;
+  text-align: center;
+  background: transparent;
+  border: none;
+}
+
+.dt-cart-item__remove {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #D4CFCA;
+  background: transparent;
+  color: #8A8580;
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.dt-cart-item__remove:hover {
+  color: #B4503F;
+  border-color: #B4503F;
+}
+
+.dt-cart__summary salla-cart-coupons {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.dt-cart__summary salla-cart-summary-card {
+  display: block;
+}
+
+.dt-cart__empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.dt-cart__empty-text {
+  font-family: 'Noto Serif Arabic', serif;
+  font-size: 20px;
+  color: #8A8580;
+  margin: 0 0 24px;
+}
+
+.dt-btn {
+  display: inline-block;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 13px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.dt-btn--primary {
+  background-color: #1A1917;
+  color: #F7F4EE;
+}
+
+.dt-btn--primary:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 900px) {
+  .dt-mockup-wrap {
+    position: static;
+  }
+
+  .dt-cart__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .dt-cart-item {
+    flex-wrap: wrap;
+  }
+
+  .dt-cart-item__thumb {
+    width: 72px;
+    height: 72px;
   }
 }

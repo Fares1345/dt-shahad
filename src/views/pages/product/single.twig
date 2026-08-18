@@ -1,0 +1,209 @@
+{#
+| Variable                        | Type    | Description                                            |
+|---------------------------------|---------|--------------------------------------------------------|
+| product.id                      | int     |                                                        |
+| product.name                    | string  |                                                        |
+| product.description             | string  | HTML description                                       |
+| product.url                     | string  | Product url                                            |
+| product.price                   | Money   |                                                        |
+| product.regular_price           | Money   |                                                        |
+| product.sale_price              | Money   |                                                        |
+| product.starting_price          | ?Money  |                                                        |
+| product.is_on_sale              | bool    | Product has discounted price                           |
+| product.is_hidden_quantity      | bool    | The quantity is hidden by merchant, or product not available |
+| product.max_quantity            | int     |                                                        |
+| product.type                    | string  | product, service, group_products, codes, digital, food, donating |
+| product.status                  | string  | sale, out, ...                                         |
+| product.options                 | ?ProductOption *Collection |                              |
+| product.options[].id            | int     |                                                        |
+| product.options[].name          | string  |                                                        |
+| product.options[].required      | bool    |                                                        |
+| product.options[].type          | string  | single-option, date, datetime, time, image, text, textarea, number, multi-options, splitter, color, thumbnail, donation |
+| product.options[].details[].id  | int     |                                                        |
+| product.options[].details[].name| string  | Name only ex `Red`                                     |
+| product.options[].details[].additional_price | float |                     |
+| product.options[].details[].is_selected | bool |                                        |
+| product.options[].details[].is_out | bool |                                           |
+#}
+{% extends "layouts.master" %}
+
+{% block content %}
+    <div class="dt-product">
+
+        {# Breadcrumb #}
+        <nav class="dt-breadcrumb" aria-label="Breadcrumb">
+            <a href="{{ link('/') }}" class="dt-breadcrumb__link">الرئيسية</a>
+            <span class="dt-breadcrumb__sep">›</span>
+            <a href="{{ link('/') }}#packages" class="dt-breadcrumb__link">الباقات</a>
+            <span class="dt-breadcrumb__sep">›</span>
+            <span class="dt-breadcrumb__current">{{ product.name }}</span>
+        </nav>
+
+        {% set duration_opt = product.options|filter(o => o.name matches '/مدة|المدة|duration|period|اشتراك/i')|first %}
+        {% set duration_label = (duration_opt and duration_opt.details|length) ? duration_opt.details|first.name : null %}
+        {% set main_price = product.is_on_sale ? product.sale_price : (product.starting_price ? product.starting_price : product.price) %}
+
+        <div class="detail-grid dt-product__grid">
+            {# Package mockup #}
+            <aside class="dt-mockup-wrap">
+                <div class="dt-mockup-card">
+                    <div class="dt-mockup-card__lines" aria-hidden="true"></div>
+                    <div class="dt-mockup-card__top">
+                        {% if duration_label %}
+                            <span class="dt-mockup-card__chip">{{ duration_label }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="dt-mockup-card__center">
+                        <div class="dt-mockup-card__logo">DT</div>
+                        <div class="dt-mockup-card__name">{{ product.name }}</div>
+                        {% if duration_label %}
+                            <div class="dt-mockup-card__duration">{{ duration_label }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="dt-mockup-card__bottom">
+                        <div>
+                            {% if product.is_on_sale %}
+                                <div class="dt-mockup-card__old">{{ product.regular_price|money }}</div>
+                            {% endif %}
+                            <div class="dt-mockup-card__price">{{ main_price|money }}</div>
+                        </div>
+                        <span class="dt-mockup-card__accent-bar" aria-hidden="true"></span>
+                    </div>
+                    <span class="dt-mockup-card__accent" aria-hidden="true"></span>
+                </div>
+            </aside>
+
+            {# Info #}
+            <div class="dt-product__info">
+                <h1 class="dt-product__title">باقة {{ product.name }}</h1>
+                <p class="dt-product__intro">{{ product.description|striptags|replace({"\r": ''})|split('\n')|filter(v => v|trim|length)|first }}</p>
+
+                <div class="dt-product__form-panel">
+                    <form id="dt-product-form" class="dt-product-form" enctype="multipart/form-data" method="post"
+                          onsubmit="return salla.form.onSubmit('cart.addItem', event)">
+                        <input type="hidden" name="id" value="{{ product.id }}">
+
+                        {% if product.options|length %}
+                            <salla-product-options data-testid="store-product-options"
+                                                   options="{{ product.options }}"
+                                                   product-id="{{ product.id }}"></salla-product-options>
+                        {% endif %}
+
+                        <div class="dt-product__qty">
+                            <span class="dt-product__qty-label">الكمية</span>
+                            {% if product.is_hidden_quantity %}
+                                <input type="hidden" name="quantity" value="1" aria-label="الكمية">
+                            {% else %}
+                                <salla-quantity-input name="quantity" value="1" max="{{ product.max_quantity }}"
+                                                      aria-label="الكمية"></salla-quantity-input>
+                            {% endif %}
+                        </div>
+
+                        <div class="dt-product__price-row">
+                            <div class="dt-product__price-wrap">
+                                {% if product.is_on_sale %}
+                                    <span class="dt-product__old-price" id="dt-product-regular">{{ product.regular_price|money }}</span>
+                                {% endif %}
+                                <div class="dt-product__price" id="dt-product-price">{{ main_price|money }}</div>
+                            </div>
+                            {% if duration_label %}
+                                <span class="dt-product__duration-chip">{{ duration_label }}</span>
+                            {% endif %}
+                        </div>
+
+                        <salla-add-product-button data-testid="store-product-add-to-cart"
+                                                  product-id="{{ product.id }}"
+                                                  product-status="{{ product.status }}"
+                                                  product-type="{{ product.type }}"
+                                                  width="wide">أضف إلى السلة</salla-add-product-button>
+                    </form>
+                </div>
+
+                {% set desc_lines = product.description|striptags|replace({"\r": ''})|split('\n')|filter(v => v|trim|length) %}
+                {% set includes = desc_lines|slice(5, 8) %}
+                {% if includes|length %}
+                    <section class="dt-product__section">
+                        <h3 class="dt-product__h3">ماذا تشمل الباقة</h3>
+                        <div class="dt-includes">
+                            {% for item in includes %}
+                                <div class="dt-includes__item">
+                                    <span class="dt-includes__check" aria-hidden="true">
+                                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8 3" stroke="#5A6340" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </span>
+                                    <span class="dt-includes__text">{{ item|trim }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+
+                {% set benefits = desc_lines|slice(1, 4) %}
+                {% if benefits|length %}
+                    <section class="dt-product__section">
+                        <h3 class="dt-product__h3">المميزات</h3>
+                        <div class="dt-benefits">
+                            {% for b in benefits %}
+                                <div class="dt-benefits__chip"><span class="dt-benefits__dot" aria-hidden="true"></span>{{ b|trim }}</div>
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+            </div>
+        </div>
+
+        {# FAQ #}
+        <section class="dt-faq">
+            <h2 class="dt-faq__title">أسئلة شائعة</h2>
+            <div class="dt-faq__list">
+                {% set dt_faqs = [
+                    { q: 'متى أحصل على خطتي الغذائية؟', a: 'بعد إكمال نموذج البيانات، يتم إعداد خطتك خلال ٢٤-٤٨ ساعة عمل وإرسالها إليك مباشرة.' },
+                    { q: 'هل يمكنني تعديل الخطة لاحقًا؟', a: 'نعم، حسب الباقة المختارة يمكنك تعديل خطتك شهريًا أو أسبوعيًا مع الفريق.' },
+                    { q: 'هل الخطة مناسبة لحالات صحية خاصة؟', a: 'نأخذ بعين الاعتبار الحالات الصحية الخاصة، ونوصي بمراجعة طبيبك للحالات الدقيقة.' },
+                    { q: 'ما هي طرق الدفع المتاحة؟', a: 'نقبل Visa و Mada و STC Pay و Apple Pay. الدفع آمن عبر منصة سلة.' },
+                    { q: 'هل يمكنني الإلغاء في أي وقت؟', a: 'يمكنك إلغاء الاشتراك وفق سياسة الإلغاء المتاحة قبل إعداد الخطة.' }
+                ] %}
+                {% for faq in dt_faqs %}
+                    <details class="dt-faq__item" {% if loop.first %}open{% endif %}>
+                        <summary class="dt-faq__q">
+                            <span>{{ faq.q }}</span>
+                            <span class="dt-faq__icon" aria-hidden="true">+</span>
+                        </summary>
+                        <p class="dt-faq__a">{{ faq.a }}</p>
+                    </details>
+                {% endfor %}
+            </div>
+        </section>
+
+        {# Related packages #}
+        <section class="dt-related">
+            <h2 class="dt-related__title">باقات أخرى</h2>
+            <salla-products-slider data-testid="store-product-related" source="related" source-value="{{ product.id }}"
+                                   block-title="" display-all-url></salla-products-slider>
+        </section>
+    </div>
+
+    <script data-cfasync="false">
+        (function () {
+            var form = document.getElementById('dt-product-form');
+            var priceEl = document.getElementById('dt-product-price');
+            if (!form || !priceEl || !window.salla) return;
+            var oldPriceEl = document.getElementById('dt-product-regular');
+            function refresh() {
+                if (!window.salla.product || !window.salla.product.getPrice) return;
+                window.salla.product.getPrice(new FormData(form)).then(function (result) {
+                    priceEl.textContent = window.salla.money(result.sale_price || result.price);
+                    if (oldPriceEl) {
+                        if (result.sale_price) {
+                            oldPriceEl.textContent = window.salla.money(result.price);
+                            oldPriceEl.style.display = 'block';
+                        } else {
+                            oldPriceEl.style.display = 'none';
+                        }
+                    }
+                }).catch(function () {});
+            }
+            form.addEventListener('change', refresh);
+            form.addEventListener('input', refresh);
+        })();
+    </script>
+{% endblock %}

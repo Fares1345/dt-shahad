@@ -2,46 +2,32 @@
 | Variable   | Type     | Description       |
 | title      | string   | عنوان القسم        |
 | subtitle   | string   | نص توضيحي          |
-| products   | array    | المنتجات المعروضة  |
-| featured   | array    | الباقة المميزة     |
+| products   | object   | {source, source_value} منتجات الباقات المختارة من إعدادات القالب |
+| featured   | object   | الباقة المميزة (الأكثر طلبًا)      |
 #}
 {% set packages_title = title is defined and title ? title : '٤ باقات، وخطة تناسبك' %}
 {% set packages_subtitle = subtitle is defined and subtitle ? subtitle : 'اختر المدة التي تناسب أهدافك، وابدأ رحلتك مع خطة تغذية علاجية مصممة خصيصًا لك.' %}
 
-{% set package_cards = [
-    {
-        name: 'باقة الابتداء',
-        duration: 'شهر واحد',
-        price: '٣٩٩ ر.س',
-        old_price: null,
-        featured: false,
-        benefits: ['خطة غذائية شهرية متكاملة', 'متابعة أسبوعية', 'تعديلات على الخطة']
-    },
-    {
-        name: 'باقة التقدم',
-        duration: '٣ أشهر',
-        price: '٧٩٩ ر.س',
-        old_price: '٩٩٩ ر.س',
-        featured: true,
-        benefits: ['كل مزايا باقة الابتداء', 'متابعة أسبوعية مكثفة', 'استشارة مباشرة شهرية']
-    },
-    {
-        name: 'باقة الالتزام',
-        duration: '٦ أشهر',
-        price: '١٤٩٩ ر.س',
-        old_price: '١٩٩٩ ر.س',
-        featured: false,
-        benefits: ['كل مزايا باقة التقدم', 'متابعة أسبوعية مكثفة', 'خطة رياضية مصاحبة']
-    },
-    {
-        name: 'باقة الاستمرار',
-        duration: '١٢ شهرًا',
-        price: '٢٤٩٩ ر.س',
-        old_price: '٣٢٩٩ ر.س',
-        featured: false,
-        benefits: ['كل مزايا باقة الالتزام', 'متابعة يومية', 'أولوية في الحجز والاستشارات']
-    }
-] %}
+{# ── Resolve products source ─────────────────────────────────────────────── #}
+{% if products.source is defined and products.source %}
+    {% set products_source = products.source %}
+    {% set products_ids = products.source_value %}
+{% elseif products is iterable %}
+    {% set products_source = 'product_ids' %}
+    {% set products_ids = products %}
+{% else %}
+    {% set products_source = '' %}
+    {% set products_ids = null %}
+{% endif %}
+
+{# ── Resolve featured product id (any field shape: object / array / scalar) ─ #}
+{% if featured.source_value is defined and featured.source_value %}
+    {% set featured_id = featured.source_value|first %}
+{% elseif featured is iterable and featured|length %}
+    {% set featured_id = featured|first %}
+{% else %}
+    {% set featured_id = featured|default('') %}
+{% endif %}
 
 <section class="dt-packages" id="packages" data-testid="store-home-dt-packages">
     <div class="dt-packages__inner">
@@ -51,44 +37,92 @@
             <p class="dt-packages__subtitle">{{ packages_subtitle }}</p>
         </div>
 
-        <div class="packages-grid">
-            {% for pkg in package_cards %}
-                <article class="dt-package-card{{ pkg.featured ? ' dt-package-card--featured' : '' }}">
-                    {% if pkg.featured %}
-                        <span class="dt-package-badge">الأكثر طلبًا</span>
-                    {% endif %}
-
-                    <div class="dt-package-logo">
-                        {% include 'partials.logo' with { width: 104 } %}
-                    </div>
-
-                    <h3 class="dt-package-name">{{ pkg.name }}</h3>
-                    <div class="dt-package-duration">{{ pkg.duration }}</div>
-
-                    <div class="dt-package-divider"></div>
-
-                    <ul class="dt-package-benefits">
-                        {% for benefit in pkg.benefits %}
-                            <li class="dt-package-benefit">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5A6340" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 6 9 17l-5-5"></path>
-                                </svg>
-                                <span>{{ benefit }}</span>
-                            </li>
-                        {% endfor %}
-                    </ul>
-
-                    <div class="dt-package-price">
-                        {% if pkg.old_price %}
-                            <span class="dt-package-price__old">{{ pkg.old_price }}</span>
+        {% if products_source and products_ids|length %}
+            {# Real store products — fetched and rendered client-side by the Twilight
+               web component using our custom card element (app/scripts/packages-card.js). #}
+            <salla-products-list
+                data-testid="store-home-dt-packages-list"
+                source="{{ products_source }}"
+                source-value="{{ products_ids|json_encode }}"
+                product-card-component="dt-package-card"
+                data-featured="{{ featured_id }}">
+            </salla-products-list>
+        {% else %}
+            {# Fallback: static cards shown only while the merchant hasn't selected
+               any package products in the theme editor. #}
+            {% set package_cards = [
+                {
+                    name: 'باقة الابتداء',
+                    duration: 'شهر واحد',
+                    price: '٣٩٩ ر.س',
+                    old_price: null,
+                    featured: false,
+                    benefits: ['خطة غذائية شهرية متكاملة', 'متابعة أسبوعية', 'تعديلات على الخطة']
+                },
+                {
+                    name: 'باقة التقدم',
+                    duration: '٣ أشهر',
+                    price: '٧٩٩ ر.س',
+                    old_price: '٩٩٩ ر.س',
+                    featured: true,
+                    benefits: ['كل مزايا باقة الابتداء', 'متابعة أسبوعية مكثفة', 'استشارة مباشرة شهرية']
+                },
+                {
+                    name: 'باقة الالتزام',
+                    duration: '٦ أشهر',
+                    price: '١٤٩٩ ر.س',
+                    old_price: '١٩٩٩ ر.س',
+                    featured: false,
+                    benefits: ['كل مزايا باقة التقدم', 'متابعة أسبوعية مكثفة', 'خطة رياضية مصاحبة']
+                },
+                {
+                    name: 'باقة الاستمرار',
+                    duration: '١٢ شهرًا',
+                    price: '٢٤٩٩ ر.س',
+                    old_price: '٣٢٩٩ ر.س',
+                    featured: false,
+                    benefits: ['كل مزايا باقة الالتزام', 'متابعة يومية', 'أولوية في الحجز والاستشارات']
+                }
+            ] %}
+            <div class="packages-grid">
+                {% for pkg in package_cards %}
+                    <article class="dt-package-card{{ pkg.featured ? ' dt-package-card--featured' : '' }}">
+                        {% if pkg.featured %}
+                            <span class="dt-package-badge">الأكثر طلبًا</span>
                         {% endif %}
-                        <span class="dt-package-price__value">{{ pkg.price }}</span>
-                    </div>
 
-                    <button type="button" class="dt-package-cta{{ pkg.featured ? ' dt-package-cta--featured' : '' }}">اختر الباقة</button>
-                    <a class="dt-package-details" href="{{ link('/') }}#packages">تفاصيل الباقة ←</a>
-                </article>
-            {% endfor %}
-        </div>
+                        <div class="dt-package-logo">
+                            {% include 'partials.logo' with { width: 104 } %}
+                        </div>
+
+                        <h3 class="dt-package-name">{{ pkg.name }}</h3>
+                        <div class="dt-package-duration">{{ pkg.duration }}</div>
+
+                        <div class="dt-package-divider"></div>
+
+                        <ul class="dt-package-benefits">
+                            {% for benefit in pkg.benefits %}
+                                <li class="dt-package-benefit">
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5A6340" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 6 9 17l-5-5"></path>
+                                    </svg>
+                                    <span>{{ benefit }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="dt-package-price">
+                            {% if pkg.old_price %}
+                                <span class="dt-package-price__old">{{ pkg.old_price }}</span>
+                            {% endif %}
+                            <span class="dt-package-price__value">{{ pkg.price }}</span>
+                        </div>
+
+                        <button type="button" class="dt-package-cta{{ pkg.featured ? ' dt-package-cta--featured' : '' }}">اختر الباقة</button>
+                        <a class="dt-package-details" href="{{ link('/') }}#packages">تفاصيل الباقة ←</a>
+                    </article>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 </section>

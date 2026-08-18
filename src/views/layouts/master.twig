@@ -8,6 +8,8 @@
 
     {% block head_scripts %}{% endblock %}
 
+    <script defer data-cfasync="false" src="{{ 'assets/packages-card.js' | asset }}"></script>
+
     {% hook 'head:start' %}
     {% hook head %}
     {% block styles %}

@@ -2,12 +2,8 @@
 module.exports = {
   important: false,
   content: [
-    './app/**/*.{js,ts,jsx,tsx,scss,css}',
-    // Monorepo checkout: scan live engine source (matches nothing standalone).
-    '../theme-engine/src/**/*.{js,ts,jsx,tsx}',
-    // Standalone (registry install): scan the engine's pre-built dist.
-    './node_modules/@salla.sa/twilight-theme-engine/dist/**/*.js',
-    './node_modules/@salla.sa/twilight-tailwind-theme/safe-list-css.txt',
+    './app/**/*.{js,ts,scss,css}',
+    './src/**/*.twig',
   ],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
@@ -35,6 +31,9 @@ module.exports = {
         danger: '#AE0A0A',
         primary: 'var(--color-primary)',
         'primary-dark': 'var(--color-primary-dark)',
+        'primary-d': 'var(--color-primary-dark)',
+        'primary-l': 'var(--color-primary-light)',
+        'primary-reverse': 'var(--color-primary-reverse)',
       },
       spacing: {
         3.75: '15px',
@@ -135,5 +134,5 @@ module.exports = {
   corePlugins: {
     outline: false,
   },
-  plugins: [require('@salla.sa/twilight-tailwind-theme'), require('@tailwindcss/forms')],
+  plugins: [],
 };
