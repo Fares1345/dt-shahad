@@ -241,7 +241,12 @@
                     "format": "dropdown-list",
                     "description": "اختر منتجات المتجر التي تظهر كباقات. إذا تُركت فارغة تُعرض أحدث المنتجات تلقائيًا",
                     "labelHTML": null,
-                    "selected": [],
+                    "selected": [
+                        319116126,
+                        1094202461,
+                        2001933660,
+                        628553299
+                    ],
                     "options": [],
                     "source": "products",
                     "multichoice": true,
@@ -249,7 +254,12 @@
                     "required": false,
                     "maxLength": 8,
                     "minLength": 0,
-                    "value": []
+                    "value": [
+                        319116126,
+                        1094202461,
+                        2001933660,
+                        628553299
+                    ]
                 },
                 {
                     "type": "items",
@@ -259,13 +269,17 @@
                     "format": "dropdown-list",
                     "description": "منتج واحد يظهر مميزًا مع شارة «الأكثر طلبًا»",
                     "labelHTML": null,
-                    "selected": [],
+                    "selected": [
+                        319116126
+                    ],
                     "options": [],
                     "source": "products",
                     "multichoice": false,
                     "searchable": true,
                     "required": false,
-                    "value": []
+                    "value": [
+                        319116126
+                    ]
                 }
             ]
         }

@@ -3,6 +3,8 @@ import { twilightReact } from '@salla.sa/twilight-theme-engine/vite';
 import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 
+const rootDir = import.meta.dirname;
+
 // The engine treats any non-loopback request host as the store identity
 // ("the request's own host is the identity of a live storefront"). That breaks
 // LAN/phone access in dev, where the host is the PC's LAN IP and store data
@@ -47,7 +49,7 @@ export default defineConfig(async () => ({
   ],
   resolve: {
     alias: {
-      '~': path.resolve(__dirname, './'),
+      '~': path.resolve(rootDir, './'),
     },
     // Singleton libs whose React context must be shared between the app and the
     // engine's bundled screens/components (they call useSuspenseQuery /
@@ -70,15 +72,15 @@ export default defineConfig(async () => ({
       // optimize the CJS deps that reach SSR: @tanstack/react-query (so the
       // engine's QueryClientProvider and route loaders share one
       // QueryClientContext) and the engine's i18n chain
-      // (react-i18next → html-parse-stringify → void-elements, use-sync-
-      // external-store). Nested paths resolve under pnpm's strict layout.
+      // (react-i18next → html-parse-stringify → use-sync-external-store).
+      // Nested paths resolve under pnpm's strict layout. html-parse-stringify
+      // v4 has no dependencies, so nothing deeper needs including.
       optimizeDeps: {
         include: [
           '@tanstack/react-query',
           '@salla.sa/twilight-theme-engine > react-i18next',
           '@salla.sa/twilight-theme-engine > i18next',
           '@salla.sa/twilight-theme-engine > react-i18next > html-parse-stringify',
-          '@salla.sa/twilight-theme-engine > react-i18next > html-parse-stringify > void-elements',
           '@salla.sa/twilight-theme-engine > react-i18next > use-sync-external-store',
         ],
       },
