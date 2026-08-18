@@ -17,9 +17,16 @@ export default defineConfig({
       scss: { api: 'modern-compiler', silenceDeprecations: ['import'] } as any,
     },
   },
+  publicDir: false,
+  server: {
+    cors: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Private-Network': 'true',
+    },
+  },
   build: {
     outDir: 'public',
-    publicDir: false,
     emptyOutDir: false,
     rollupOptions: {
       input: {

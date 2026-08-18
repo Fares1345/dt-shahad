@@ -4,7 +4,8 @@
   "description": "dt-shahad - a Salla Twilight (Twig) theme",
   "type": "module",
   "scripts": {
-    "build": "vite build && node -e \"require('fs').rmSync('public/assets/app.js',{force:true})\""
+    "build": "vite build && node -e \"require('fs').rmSync('public/assets/app.js',{force:true})\"",
+    "watch": "vite build --watch"
   },
   "dependencies": {},
   "devDependencies": {
