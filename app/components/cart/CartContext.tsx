@@ -74,7 +74,6 @@ interface SallaCartDetails {
 
 interface SallaLike {
   cart: {
-    api: { getCurrentCartId: () => Promise<number | null> };
     addItem: (productId: number | string, quantity?: number) => Promise<void>;
     updateItem: (payload: { id: number | string; quantity: number }) => Promise<void>;
     deleteItem: (itemId: number | string) => Promise<void>;
@@ -82,7 +81,7 @@ interface SallaLike {
   };
   api: {
     cart: {
-      details: (cartId?: number | null) => Promise<{ data?: { cart?: SallaCartDetails } }>;
+      details: () => Promise<{ data?: { cart?: SallaCartDetails } }>;
     };
   };
   event: {
@@ -115,14 +114,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const runId = ++refreshIdRef.current;
     setIsLoading(true);
     try {
-      const cartId = await salla.cart.api.getCurrentCartId();
-      if (cartId == null) {
-        setItems([]);
-        setCount(0);
-        setTotals(null);
-        return;
-      }
-      const response = await salla.api.cart.details(cartId);
+      // `salla.api.cart.details()` resolves the current customer/session cart
+      // without needing a cart ID.
+      const response = await salla.api.cart.details();
       const cart = response?.data?.cart;
       if (!cart) return;
       setItems(

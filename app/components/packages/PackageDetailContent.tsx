@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent, SyntheticEvent } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useMoney } from '@salla.sa/twilight-theme-engine/hooks/useMoney';
+import { useCart } from '../cart/CartContext';
 import type { PackageView } from '../../lib/store-data';
 
 const FAQS = [
@@ -19,6 +20,10 @@ interface SallaLike {
   form: {
     onSubmit: (action: string, event: SyntheticEvent) => void;
   };
+  event: {
+    on: (event: string, callback: () => void) => unknown;
+    off: (event: string, callback: () => void) => unknown;
+  };
 }
 
 function getSalla(): SallaLike | undefined {
@@ -30,8 +35,22 @@ export function PackageDetailContent({ product, related }: { product: PackageVie
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [price, setPrice] = useState<number>(product.salePrice ?? product.price);
+  const [missingRequired, setMissingRequired] = useState<number[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
   const { format } = useMoney();
+  const { openCart } = useCart();
+
+  // Open the drawer when a product is actually added to the real Salla cart
+  // from this page (the SDK dispatches the event after a successful add).
+  useEffect(() => {
+    const salla = getSalla();
+    if (!salla) return;
+    const handler = () => openCart();
+    salla.event.on('Product Added', handler);
+    return () => {
+      salla.event.off('Product Added', handler);
+    };
+  }, [openCart]);
 
   const refreshPrice = useCallback(() => {
     const salla = getSalla();
@@ -51,8 +70,27 @@ export function PackageDetailContent({ product, related }: { product: PackageVie
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     const salla = getSalla();
     if (!salla) return;
-    // The Salla SDK validates required options, serializes the form
-    // (id / quantity / options[..]) and adds the item to the real cart.
+    // Required options must be selected before the item can be added — the SDK
+    // rejects the add otherwise, so validate client-side first and never guess
+    // default values.
+    const missing = product.options
+      .filter((group) => group.required)
+      .filter((group) => {
+        const checked = formRef.current?.querySelector(
+          `input[name="options[${group.id}]"]:checked`
+        );
+        return !checked;
+      })
+      .map((group) => group.id);
+    if (missing.length) {
+      setMissingRequired(missing);
+      const first = formRef.current?.querySelector(`[data-group="${missing[0]}"]`);
+      first?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    setMissingRequired([]);
+    // The Salla SDK validates, serializes the form (id / quantity / options[..])
+    // and adds the item to the real cart.
     salla.form.onSubmit('cart.addItem', event);
   };
 
@@ -201,9 +239,11 @@ export function PackageDetailContent({ product, related }: { product: PackageVie
 
                 {product.options.length > 0 && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', marginBottom: '20px' }}>
-                    {product.options.map((group) => (
-                      <div key={group.id}>
-                        <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '13px', fontWeight: 600, color: '#1A1917', marginBottom: '10px' }}>
+                    {product.options.map((group) => {
+                      const groupMissing = missingRequired.includes(group.id);
+                      return (
+                      <div key={group.id} data-group={group.id}>
+                        <div style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '13px', fontWeight: 600, color: groupMissing ? '#B4503F' : '#1A1917', marginBottom: '10px' }}>
                           {group.name}
                           {group.required && <span style={{ color: '#C4AB6E' }}> *</span>}
                         </div>
@@ -215,7 +255,7 @@ export function PackageDetailContent({ product, related }: { product: PackageVie
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: '8px',
-                                border: '1px solid #D4CFCA',
+                                border: groupMissing ? '1px solid #B4503F' : '1px solid #D4CFCA',
                                 borderRadius: '20px',
                                 padding: '7px 16px',
                                 cursor: 'pointer',
@@ -231,7 +271,12 @@ export function PackageDetailContent({ product, related }: { product: PackageVie
                                 name={`options[${group.id}]`}
                                 value={value.id}
                                 defaultChecked={value.is_selected === true}
-                                onChange={refreshPrice}
+                                onChange={() => {
+                                  refreshPrice();
+                                  setMissingRequired((current) =>
+                                    current.filter((id) => id !== group.id)
+                                  );
+                                }}
                                 style={{ accentColor: '#5A6340', margin: 0 }}
                               />
                               <span>{value.name}</span>
@@ -241,8 +286,14 @@ export function PackageDetailContent({ product, related }: { product: PackageVie
                             </label>
                           ))}
                         </div>
+                        {groupMissing && (
+                          <p style={{ fontFamily: "'Tajawal', sans-serif", fontSize: '12px', color: '#B4503F', margin: '8px 0 0' }}>
+                            الرجاء اختيار خيار من هذه المجموعة
+                          </p>
+                        )}
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
 

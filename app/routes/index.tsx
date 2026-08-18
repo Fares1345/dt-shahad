@@ -34,11 +34,26 @@ export const Route = createFileRoute('/{-$locale}/')({
     const configuredIds = extractProductIds(packagesCfg, 'products');
     const featuredId = extractSingleProductId(packagesCfg, 'featured');
 
-    const ordered = configuredIds.length
-      ? configuredIds
-          .map((id) => all.find((product) => normalizeProductId(product.id) === id))
-          .filter((product): product is Product => Boolean(product))
-      : all.slice(0, 4);
+    // Editor-configured products are fetched directly by ID (Salla's "selected"
+    // source) so a package is always resolved even if it is not among the latest
+    // products. The latest list is still fetched for the store-products counter.
+    const configuredNumericIds = configuredIds
+      .map((id) => Number(id))
+      .filter((id) => Number.isFinite(id));
+
+    const selected = configuredNumericIds.length
+      ? (await queryClient.ensureQueryData(
+          productApi.queries.list({ source: 'selected', sourceValue: configuredNumericIds })
+        )).items ?? []
+      : [];
+
+    let ordered: Product[] = [];
+    if (configuredIds.length) {
+      ordered = configuredIds
+        .map((id) => selected.find((product) => normalizeProductId(product.id) === id))
+        .filter((product): product is Product => Boolean(product));
+    }
+    if (!ordered.length) ordered = all.slice(0, 4);
 
     return {
       heroCfg,

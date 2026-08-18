@@ -33,6 +33,8 @@ function PackageCard({ pkg }: { pkg: PackageView }) {
   const featured = pkg.recommended;
   const { addToCart } = useCart();
   const { format } = useMoney();
+  const navigate = useNavigate();
+  const requiresOptions = pkg.options.some((option) => option.required);
   const baseShadow = featured
     ? '0 24px 60px rgba(61,71,46,0.16)'
     : '0 10px 34px rgba(61,71,46,0.07)';
@@ -169,7 +171,15 @@ function PackageCard({ pkg }: { pkg: PackageView }) {
 
       <button
         disabled={!pkg.available}
-        onClick={() => void addToCart(pkg.id)}
+        onClick={() => {
+          // Products with required options must be configured on the detail
+          // page first — never add them with missing options.
+          if (requiresOptions) {
+            void navigate({ to: `/packages/${pkg.id}` });
+          } else {
+            void addToCart(pkg.id);
+          }
+        }}
         style={{
           padding: '14px 0',
           backgroundColor: featured ? OLIVE : 'transparent',
