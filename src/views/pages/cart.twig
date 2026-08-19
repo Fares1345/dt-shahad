@@ -36,19 +36,21 @@
 
             {% if cart.items|length %}
                 {% if cart.free_shipping_bar %}
+                    {% set fsb = cart.free_shipping_bar %}
+                    {% set fsb_percent = fsb.percent > 100 ? 100 : (fsb.percent < 0 ? 0 : fsb.percent) %}
                     <div class="dt-cart__shipping-bar" data-testid="store-cart-free-shipping">
                         <div class="dt-cart__shipping-head">
                             <span class="dt-cart__shipping-title">{{ trans('cart.free_shipping.title') }}</span>
-                            <span class="dt-cart__shipping-msg">
-                                {% if cart.free_shipping_bar.has_free_shipping %}
+                            <span class="dt-cart__shipping-msg" id="dt-cart-shipping-msg">
+                                {% if fsb.has_free_shipping %}
                                     {{ trans('cart.free_shipping.achieved') }}
                                 {% else %}
-                                    {{ trans('cart.free_shipping.remaining', { amount: cart.free_shipping_bar.remaining|money }) }}
+                                    {{ trans('cart.free_shipping.remaining', { amount: fsb.remaining|money }) }}
                                 {% endif %}
                             </span>
                         </div>
                         <div class="dt-cart__shipping-track">
-                            <span class="dt-cart__shipping-fill" style="width: {{ cart.free_shipping_bar.percent }}%"></span>
+                            <span class="dt-cart__shipping-fill" style="width: {{ fsb_percent }}%"></span>
                         </div>
                     </div>
                 {% endif %}
@@ -98,4 +100,53 @@
             {% endif %}
         </div>
     </div>
+
+    <script data-cfasync="false">
+        (function () {
+            var salla = window.salla;
+            if (!salla) return;
+
+            function init() {
+                var fill = document.querySelector('.dt-cart__shipping-fill');
+                var msg = document.getElementById('dt-cart-shipping-msg');
+
+                function updateFromSummary(summary) {
+                    if (!summary) return;
+                    if (typeof summary.count === 'number' && summary.count === 0) {
+                        window.location.reload();
+                        return;
+                    }
+                    var bar = summary.free_shipping_bar;
+                    if (bar && fill && msg && salla.lang && typeof salla.lang.get === 'function') {
+                        var percent = bar.percent > 100 ? 100 : (bar.percent < 0 ? 0 : bar.percent);
+                        fill.style.width = percent + '%';
+                        msg.textContent = bar.has_free_shipping
+                            ? salla.lang.get('cart.free_shipping.achieved')
+                            : salla.lang.get('cart.free_shipping.remaining', { amount: salla.money(bar.remaining) });
+                    }
+                    if (summary.items) {
+                        summary.items.forEach(function (item) {
+                            var row = document.getElementById('item-' + item.id);
+                            var price = row && row.querySelector('.dt-cart-item__price');
+                            if (price && salla.money && typeof salla.money === 'function') {
+                                price.textContent = salla.money(item.total);
+                            }
+                        });
+                    }
+                }
+
+                var events = salla.event && salla.event.cart ? salla.event.cart : null;
+                if (!events && salla.cart && salla.cart.event) events = salla.cart.event;
+                if (events && typeof events.onUpdated === 'function') {
+                    events.onUpdated(updateFromSummary);
+                }
+            }
+
+            if (window.salla && typeof salla.onReady === 'function') {
+                salla.onReady(init);
+            } else {
+                document.addEventListener('theme::ready', init, { once: true });
+            }
+        })();
+    </script>
 {% endblock %}

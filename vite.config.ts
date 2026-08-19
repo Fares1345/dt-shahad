@@ -30,7 +30,7 @@ export default defineConfig({
     emptyOutDir: false,
     rollupOptions: {
       input: {
-        app: path.resolve(rootDir, 'app/styles/entry.ts'),
+        app: path.resolve(rootDir, 'app/styles/app.css'),
         'packages-card': path.resolve(rootDir, 'app/scripts/packages-card.js'),
       },
       output: {

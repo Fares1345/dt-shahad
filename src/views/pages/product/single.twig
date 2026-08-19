@@ -5,15 +5,19 @@
 | product.name                    | string  |                                                        |
 | product.description             | string  | HTML description                                       |
 | product.url                     | string  | Product url                                            |
-| product.price                   | Money   |                                                        |
-| product.regular_price           | Money   |                                                        |
-| product.sale_price              | Money   |                                                        |
-| product.starting_price          | ?Money  |                                                        |
+| product.price                   | Money   | Current price                                          |
+| product.regular_price           | Money   | Regular price                                          |
+| product.sale_price              | Money   | Sale price if on sale                                  |
+| product.starting_price          | ?Money  | Starting price for products with options               |
 | product.is_on_sale              | bool    | Product has discounted price                           |
 | product.is_hidden_quantity      | bool    | The quantity is hidden by merchant, or product not available |
 | product.max_quantity            | int     |                                                        |
-| product.type                    | string  | product, service, group_products, codes, digital, food, donating |
-| product.status                  | string  | sale, out, ...                                         |
+| product.type                    | string  | product, service, group_products, codes, digital, food, booking, donating |
+| product.status                  | string  | sale, out, out-and-notify                              |
+| product.category                | ?Category |                                                     |
+| product.category.name           | string  |                                                        |
+| product.category.url            | string  |                                                        |
+| product.notify_availability     | ?object | does product outOfStock & can visitor subscribe to notify availability |
 | product.options                 | ?ProductOption *Collection |                              |
 | product.options[].id            | int     |                                                        |
 | product.options[].name          | string  |                                                        |
@@ -28,26 +32,38 @@
 {% extends "layouts.master" %}
 
 {% block content %}
+    {% set product_name = product.name is defined and product.name ? product.name : '' %}
+    {% set product_desc = product.description is defined and product.description ? product.description : '' %}
+    {% set product_options = product.options is defined and product.options ? product.options : [] %}
+    {% set product_cat = product.category is defined and product.category ? product.category : null %}
+    {% set product_cat_name = product_cat and product_cat.name is defined and product_cat.name ? product_cat.name : '' %}
+    {% set product_cat_url = product_cat and product_cat.url is defined and product_cat.url ? product_cat.url : null %}
+    {# Optional enhancement: surface a duration-type option as a small chip. Display-only, never alters or hides options. #}
+    {% set duration_opt = product_options|filter(o => o.name is defined and o.name matches '/مدة|المدة|duration|period|اشتراك/i')|first %}
+    {% set duration_label = (duration_opt and duration_opt.details is defined and duration_opt.details|length) ? duration_opt.details|first.name : null %}
+    {% set product_on_sale = product.is_on_sale is defined and product.is_on_sale and product.sale_price is defined and product.sale_price %}
+    {% set product_starting = product.starting_price is defined and product.starting_price %}
+    {% set main_price = product_on_sale ? product.sale_price : (product_starting ? product.starting_price : product.price) %}
+
     <div class="dt-product">
 
-        {# Breadcrumb #}
+        {# Breadcrumb: Home › Category (when available) › Product #}
         <nav class="dt-breadcrumb" aria-label="{{ trans('common.breadcrumb.aria') }}">
             <a href="{{ link('/') }}" class="dt-breadcrumb__link">{{ trans('common.titles.home') }}</a>
-            <span class="dt-breadcrumb__sep" aria-hidden="true">›</span>
-            <a href="{{ link('/') }}#packages" class="dt-breadcrumb__link">{{ trans('header.nav.packages') }}</a>
+            {% if product_cat_name %}
+                <span class="dt-breadcrumb__sep" aria-hidden="true">›</span>
+                {% if product_cat_url %}
+                    <a href="{{ product_cat_url }}" class="dt-breadcrumb__link">{{ product_cat_name }}</a>
+                {% else %}
+                    <span class="dt-breadcrumb__current">{{ product_cat_name }}</span>
+                {% endif %}
+            {% endif %}
             <span class="dt-breadcrumb__sep" aria-hidden="true">›</span>
             <span class="dt-breadcrumb__current">{{ product_name }}</span>
         </nav>
 
-        {% set product_name = product.name is defined and product.name ? product.name : '' %}
-        {% set product_desc = product.description is defined and product.description ? product.description : '' %}
-        {% set product_options = product.options is defined and product.options ? product.options : [] %}
-        {% set duration_opt = product_options|filter(o => o.name is defined and o.name matches '/مدة|المدة|duration|period|اشتراك/i')|first %}
-        {% set duration_label = (duration_opt and duration_opt.details is defined and duration_opt.details|length) ? duration_opt.details|first.name : null %}
-        {% set main_price = product.is_on_sale ? product.sale_price : (product.starting_price ? product.starting_price : product.price) %}
-
         <div class="detail-grid dt-product__grid">
-            {# Package mockup #}
+            {# Product visual card (real name/price only) #}
             <aside class="dt-mockup-wrap">
                 <div class="dt-mockup-card">
                     <div class="dt-mockup-card__lines" aria-hidden="true"></div>
@@ -65,7 +81,7 @@
                     </div>
                     <div class="dt-mockup-card__bottom">
                         <div>
-                            {% if product.is_on_sale %}
+                            {% if product_on_sale and product.regular_price is defined %}
                                 <div class="dt-mockup-card__old">{{ product.regular_price|money }}</div>
                             {% endif %}
                             <div class="dt-mockup-card__price">{{ main_price|money }}</div>
@@ -78,8 +94,7 @@
 
             {# Info #}
             <div class="dt-product__info">
-                <h1 class="dt-product__title">{{ trans('product.title', { name: product_name }) }}</h1>
-                <p class="dt-product__intro">{{ product_desc|striptags|replace({"\r": ''})|split('\n')|filter(v => v|trim|length)|first }}</p>
+                <h1 class="dt-product__title">{{ product_name }}</h1>
 
                 <div class="dt-product__form-panel">
                     <form id="dt-product-form" class="dt-product-form" enctype="multipart/form-data" method="post"
@@ -94,7 +109,7 @@
 
                         <div class="dt-product__qty">
                             <span class="dt-product__qty-label">{{ trans('common.elements.quantity') }}</span>
-                            {% if product.is_hidden_quantity %}
+                            {% if product.is_hidden_quantity or product.type == 'booking' %}
                                 <input type="hidden" name="quantity" value="1" aria-label="{{ trans('common.elements.quantity') }}">
                             {% else %}
                                 <salla-quantity-input name="quantity" value="1" max="{{ product.max_quantity }}"
@@ -104,8 +119,11 @@
 
                         <div class="dt-product__price-row">
                             <div class="dt-product__price-wrap">
-                                {% if product.is_on_sale %}
+                                {% if product_on_sale %}
                                     <span class="dt-product__old-price" id="dt-product-regular">{{ product.regular_price|money }}</span>
+                                {% endif %}
+                                {% if product_starting and not product_on_sale %}
+                                    <span class="dt-product__starting-label">{{ trans('pages.products.starting_price') }}</span>
                                 {% endif %}
                                 <div class="dt-product__price" id="dt-product-price">{{ main_price|money }}</div>
                             </div>
@@ -118,66 +136,25 @@
                                                   product-id="{{ product.id }}"
                                                   product-status="{{ product.status }}"
                                                   product-type="{{ product.type }}"
-                                                  width="wide">{{ trans('common.actions.add_to_cart') }}</salla-add-product-button>
+                                                  width="wide"
+                                                  {% if product.notify_availability is defined and product.notify_availability %}
+                                                  {{ product.notify_availability.subscribed ? 'is-subscribed' : '' }}
+                                                  channels="{{ product.notify_availability.channels|join(',') }}"
+                                                  {% if product.notify_availability.options is defined and product.notify_availability.options %}notify-options-availability{% endif %}
+                                                  {% endif %}>{{ trans('common.actions.add_to_cart') }}</salla-add-product-button>
                     </form>
                 </div>
 
-                {% set desc_lines = product_desc|striptags|replace({"\r": ''})|split('\n')|filter(v => v|trim|length) %}
-                {% set includes = desc_lines|slice(5, 8) %}
-                {% if includes|length %}
+                {% if product_desc %}
                     <section class="dt-product__section">
-                        <h2 class="dt-product__h3">{{ trans('product.includes') }}</h2>
-                        <div class="dt-includes">
-                            {% for item in includes %}
-                                <div class="dt-includes__item">
-                                    <span class="dt-includes__check" aria-hidden="true">
-                                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4.5 7.5L8 3" stroke="#5A6340" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                    </span>
-                                    <span class="dt-includes__text">{{ item|trim }}</span>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </section>
-                {% endif %}
-
-                {% set benefits = desc_lines|slice(1, 4) %}
-                {% if benefits|length %}
-                    <section class="dt-product__section">
-                        <h2 class="dt-product__h3">{{ trans('product.features') }}</h2>
-                        <div class="dt-benefits">
-                            {% for b in benefits %}
-                                <div class="dt-benefits__chip"><span class="dt-benefits__dot" aria-hidden="true"></span>{{ b|trim }}</div>
-                            {% endfor %}
-                        </div>
+                        <h2 class="dt-product__h3">{{ trans('product.description') }}</h2>
+                        <div class="dt-product__content">{{ product_desc|raw }}</div>
                     </section>
                 {% endif %}
             </div>
         </div>
 
-        {# FAQ #}
-        <section class="dt-faq">
-            <h2 class="dt-faq__title">{{ trans('product.faq.title') }}</h2>
-            <div class="dt-faq__list">
-                {% set dt_faqs = [
-                    { q: trans('product.faq.1.q'), a: trans('product.faq.1.a') },
-                    { q: trans('product.faq.2.q'), a: trans('product.faq.2.a') },
-                    { q: trans('product.faq.3.q'), a: trans('product.faq.3.a') },
-                    { q: trans('product.faq.4.q'), a: trans('product.faq.4.a') },
-                    { q: trans('product.faq.5.q'), a: trans('product.faq.5.a') }
-                ] %}
-                {% for faq in dt_faqs %}
-                    <details class="dt-faq__item" {% if loop.first %}open{% endif %}>
-                        <summary class="dt-faq__q">
-                            <span>{{ faq.q }}</span>
-                            <span class="dt-faq__icon" aria-hidden="true">+</span>
-                        </summary>
-                        <p class="dt-faq__a">{{ faq.a }}</p>
-                    </details>
-                {% endfor %}
-            </div>
-        </section>
-
-        {# Related packages #}
+        {# Related products #}
         <section class="dt-related">
             <h2 class="dt-related__title">{{ trans('product.related.title') }}</h2>
             <salla-products-slider data-testid="store-product-related" source="related" source-value="{{ product.id }}"
@@ -194,10 +171,11 @@
             function refresh() {
                 if (!window.salla.product || !window.salla.product.getPrice) return;
                 window.salla.product.getPrice(new FormData(form)).then(function (result) {
-                    priceEl.textContent = window.salla.money(result.sale_price || result.price);
+                    priceEl.textContent = window.salla.money(result.price);
                     if (oldPriceEl) {
-                        if (result.sale_price) {
-                            oldPriceEl.textContent = window.salla.money(result.price);
+                        var onSale = result.has_sale_price && result.regular_price > result.price;
+                        if (onSale) {
+                            oldPriceEl.textContent = window.salla.money(result.regular_price);
                             oldPriceEl.style.display = 'block';
                         } else {
                             oldPriceEl.style.display = 'none';

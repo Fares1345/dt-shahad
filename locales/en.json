@@ -82,40 +82,15 @@
     "empty": "No packages selected yet. Choose store products from the theme settings to show packages here."
   },
   "product": {
-    "title": ":name package",
-    "includes": "What's included in the package",
-    "features": "Features",
-    "faq": {
-      "title": "Frequently Asked Questions",
-      "1": {
-        "q": "When will I receive my meal plan?",
-        "a": "After completing the data form, your plan is prepared within 24-48 working hours and sent to you directly."
-      },
-      "2": {
-        "q": "Can I modify the plan later?",
-        "a": "Yes, depending on the package selected, you can adjust your plan monthly or weekly with the team."
-      },
-      "3": {
-        "q": "Is the plan suitable for special health conditions?",
-        "a": "We take special health conditions into consideration and recommend consulting your doctor for precise cases."
-      },
-      "4": {
-        "q": "What payment methods are available?",
-        "a": "We accept Visa, Mada, STC Pay and Apple Pay. Payment is secure via the Salla platform."
-      },
-      "5": {
-        "q": "Can I cancel at any time?",
-        "a": "You can cancel the subscription according to the available cancellation policy before the plan is prepared."
-      }
-    },
+    "description": "Description",
     "related": {
-      "title": "Other packages"
+      "title": "Similar products"
     }
   },
   "cart": {
     "title": "Shopping Cart",
     "empty": "Your cart is empty",
-    "empty_cta": "Browse packages",
+    "empty_cta": "Browse products",
     "remove": "Remove from cart",
     "free_shipping": {
       "title": "Free shipping",
@@ -154,6 +129,7 @@
     "products": {
       "add_to_cart": "Add to Cart",
       "out_of_stock": "Out of Stock",
+      "starting_price": "Starting from",
       "quantity": "Quantity",
       "price": "Price",
       "attachments": "Attachments"

@@ -8,3 +8,6 @@ stats.html
 coverage/
 tsconfig.tsbuildinfo
 dev.log
+.tanstack/
+# Empty JS stub if the CSS entry is ever re-wrapped in a TS entry (see vite.config.ts)
+public/assets/app.js
