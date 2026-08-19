@@ -6,7 +6,7 @@
                 <div class="dt-footer__logo">
                     {% include 'partials.logo' with { variant: 'white', width: 160 } %}
                 </div>
-                <p class="dt-footer__tagline">تغذية مصممة لحياتك. خطط غذائية مدروسة تساعدك على بناء أسلوب حياة أكثر توازنًا.</p>
+                <p class="dt-footer__tagline">{{ trans('footer.tagline') }}</p>
 
                 {% set social_items = [
                     { key: 'instagram', value: store.social.instagram|default(''), icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>' },
@@ -37,15 +37,15 @@
             </div>
 
             <div class="dt-footer__nav">
-                <h4 class="dt-footer__heading">التنقل</h4>
-                <a class="dt-footer__link" href="{{ link('/') }}">الرئيسية</a>
-                <a class="dt-footer__link" href="{{ link('/') }}#packages">الباقات</a>
-                <a class="dt-footer__link" href="{{ link('/about') }}">من نحن</a>
-                <a class="dt-footer__link" href="{{ link('/blog') }}">المدونة</a>
+                <h4 class="dt-footer__heading">{{ trans('footer.nav.heading') }}</h4>
+                <a class="dt-footer__link" href="{{ link('/') }}">{{ trans('common.titles.home') }}</a>
+                <a class="dt-footer__link" href="{{ link('/') }}#packages">{{ trans('header.nav.packages') }}</a>
+                <a class="dt-footer__link" href="{{ link('/about') }}">{{ trans('header.nav.about') }}</a>
+                <a class="dt-footer__link" href="{{ link('/blog') }}">{{ trans('header.nav.blog') }}</a>
             </div>
 
             <div class="dt-footer__contact">
-                <h4 class="dt-footer__heading">تواصل معنا</h4>
+                <h4 class="dt-footer__heading">{{ trans('footer.contact.heading') }}</h4>
                 {% set contact_items = [
                     { key: 'email', value: store.contacts.email|default(''), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>' },
                     { key: 'mobile', value: store.contacts.mobile|default(''), icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>' },
@@ -77,7 +77,7 @@
                         </div>
                     {% endfor %}
                 {% else %}
-                    <p class="dt-footer__empty">لا توجد بيانات تواصل بعد</p>
+                    <p class="dt-footer__empty">{{ trans('footer.contact.empty') }}</p>
                 {% endif %}
             </div>
         </div>
@@ -85,8 +85,8 @@
         <div class="dt-footer__divider"></div>
 
         <div class="dt-footer__bottom">
-            <p class="dt-footer__copyright">© 2026 DT. SHAHAD. جميع الحقوق محفوظة.</p>
-            <p class="dt-footer__powered">مدعوم بـ Salla</p>
+            <p class="dt-footer__copyright">{{ trans('footer.copyright') }}</p>
+            <p class="dt-footer__powered">{{ trans('footer.powered') }}</p>
         </div>
     </div>
 </footer>

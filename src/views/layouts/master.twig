@@ -14,6 +14,7 @@
     {% hook head %}
     {% block styles %}
         <link rel="stylesheet" href="{{ 'app.css' | asset }}">
+        <link rel="stylesheet" href="{{ 'fonts/sallaicons.css'|cdn }}">
     {% endblock %}
 
     <style>
@@ -33,14 +34,14 @@
 </head>
 <body id="app" class="dt-shahad {% hook 'body:classes' %}">
     <noscript>
-        To get full functionality of this site you need to enable JavaScript.
-        <a href="https://www.enable-javascript.com/" rel="noreferrer" target="_blank">How to enable JavaScript</a>.
+        {{ trans('noscript.text') }}
+        <a href="https://www.enable-javascript.com/" rel="noreferrer" target="_blank">{{ trans('noscript.link') }}</a>.
     </noscript>
 
     <div class="dt-loader" id="dt-loader" aria-hidden="true">
         <div class="dt-loader__inner">
             <span class="dt-loader__spinner"></span>
-            <span class="dt-loader__text">DT. SHAHAD</span>
+            <span class="dt-loader__text">{{ trans('brand.loading') }}</span>
         </div>
     </div>
 

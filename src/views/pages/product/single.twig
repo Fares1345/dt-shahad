@@ -31,11 +31,11 @@
     <div class="dt-product">
 
         {# Breadcrumb #}
-        <nav class="dt-breadcrumb" aria-label="Breadcrumb">
-            <a href="{{ link('/') }}" class="dt-breadcrumb__link">الرئيسية</a>
-            <span class="dt-breadcrumb__sep">›</span>
-            <a href="{{ link('/') }}#packages" class="dt-breadcrumb__link">الباقات</a>
-            <span class="dt-breadcrumb__sep">›</span>
+        <nav class="dt-breadcrumb" aria-label="{{ trans('common.breadcrumb.aria') }}">
+            <a href="{{ link('/') }}" class="dt-breadcrumb__link">{{ trans('common.titles.home') }}</a>
+            <span class="dt-breadcrumb__sep" aria-hidden="true">›</span>
+            <a href="{{ link('/') }}#packages" class="dt-breadcrumb__link">{{ trans('header.nav.packages') }}</a>
+            <span class="dt-breadcrumb__sep" aria-hidden="true">›</span>
             <span class="dt-breadcrumb__current">{{ product_name }}</span>
         </nav>
 
@@ -78,7 +78,7 @@
 
             {# Info #}
             <div class="dt-product__info">
-                <h1 class="dt-product__title">باقة {{ product_name }}</h1>
+                <h1 class="dt-product__title">{{ trans('product.title', { name: product_name }) }}</h1>
                 <p class="dt-product__intro">{{ product_desc|striptags|replace({"\r": ''})|split('\n')|filter(v => v|trim|length)|first }}</p>
 
                 <div class="dt-product__form-panel">
@@ -93,12 +93,12 @@
                         {% endif %}
 
                         <div class="dt-product__qty">
-                            <span class="dt-product__qty-label">الكمية</span>
+                            <span class="dt-product__qty-label">{{ trans('common.elements.quantity') }}</span>
                             {% if product.is_hidden_quantity %}
-                                <input type="hidden" name="quantity" value="1" aria-label="الكمية">
+                                <input type="hidden" name="quantity" value="1" aria-label="{{ trans('common.elements.quantity') }}">
                             {% else %}
                                 <salla-quantity-input name="quantity" value="1" max="{{ product.max_quantity }}"
-                                                      aria-label="الكمية"></salla-quantity-input>
+                                                      aria-label="{{ trans('common.elements.quantity') }}"></salla-quantity-input>
                             {% endif %}
                         </div>
 
@@ -118,7 +118,7 @@
                                                   product-id="{{ product.id }}"
                                                   product-status="{{ product.status }}"
                                                   product-type="{{ product.type }}"
-                                                  width="wide">أضف إلى السلة</salla-add-product-button>
+                                                  width="wide">{{ trans('common.actions.add_to_cart') }}</salla-add-product-button>
                     </form>
                 </div>
 
@@ -126,7 +126,7 @@
                 {% set includes = desc_lines|slice(5, 8) %}
                 {% if includes|length %}
                     <section class="dt-product__section">
-                        <h3 class="dt-product__h3">ماذا تشمل الباقة</h3>
+                        <h2 class="dt-product__h3">{{ trans('product.includes') }}</h2>
                         <div class="dt-includes">
                             {% for item in includes %}
                                 <div class="dt-includes__item">
@@ -143,7 +143,7 @@
                 {% set benefits = desc_lines|slice(1, 4) %}
                 {% if benefits|length %}
                     <section class="dt-product__section">
-                        <h3 class="dt-product__h3">المميزات</h3>
+                        <h2 class="dt-product__h3">{{ trans('product.features') }}</h2>
                         <div class="dt-benefits">
                             {% for b in benefits %}
                                 <div class="dt-benefits__chip"><span class="dt-benefits__dot" aria-hidden="true"></span>{{ b|trim }}</div>
@@ -156,14 +156,14 @@
 
         {# FAQ #}
         <section class="dt-faq">
-            <h2 class="dt-faq__title">أسئلة شائعة</h2>
+            <h2 class="dt-faq__title">{{ trans('product.faq.title') }}</h2>
             <div class="dt-faq__list">
                 {% set dt_faqs = [
-                    { q: 'متى أحصل على خطتي الغذائية؟', a: 'بعد إكمال نموذج البيانات، يتم إعداد خطتك خلال ٢٤-٤٨ ساعة عمل وإرسالها إليك مباشرة.' },
-                    { q: 'هل يمكنني تعديل الخطة لاحقًا؟', a: 'نعم، حسب الباقة المختارة يمكنك تعديل خطتك شهريًا أو أسبوعيًا مع الفريق.' },
-                    { q: 'هل الخطة مناسبة لحالات صحية خاصة؟', a: 'نأخذ بعين الاعتبار الحالات الصحية الخاصة، ونوصي بمراجعة طبيبك للحالات الدقيقة.' },
-                    { q: 'ما هي طرق الدفع المتاحة؟', a: 'نقبل Visa و Mada و STC Pay و Apple Pay. الدفع آمن عبر منصة سلة.' },
-                    { q: 'هل يمكنني الإلغاء في أي وقت؟', a: 'يمكنك إلغاء الاشتراك وفق سياسة الإلغاء المتاحة قبل إعداد الخطة.' }
+                    { q: trans('product.faq.1.q'), a: trans('product.faq.1.a') },
+                    { q: trans('product.faq.2.q'), a: trans('product.faq.2.a') },
+                    { q: trans('product.faq.3.q'), a: trans('product.faq.3.a') },
+                    { q: trans('product.faq.4.q'), a: trans('product.faq.4.a') },
+                    { q: trans('product.faq.5.q'), a: trans('product.faq.5.a') }
                 ] %}
                 {% for faq in dt_faqs %}
                     <details class="dt-faq__item" {% if loop.first %}open{% endif %}>
@@ -179,7 +179,7 @@
 
         {# Related packages #}
         <section class="dt-related">
-            <h2 class="dt-related__title">باقات أخرى</h2>
+            <h2 class="dt-related__title">{{ trans('product.related.title') }}</h2>
             <salla-products-slider data-testid="store-product-related" source="related" source-value="{{ product.id }}"
                                    block-title="" display-all-url></salla-products-slider>
         </section>

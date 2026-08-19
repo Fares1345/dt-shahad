@@ -5,14 +5,14 @@
 #}
 {% extends "layouts.master" %}
 
-{% block title %}{{ 'المدونة' }}{% endblock %}
+{% block title %}{{ trans('blog.title') }}{% endblock %}
 
 {% block content %}
     <div class="dt-blog">
         <div class="dt-blog__head">
-            <span class="dt-packages__eyebrow">المدونة</span>
-            <h1 class="dt-blog__title">أحدث المقالات</h1>
-            <p class="dt-blog__subtitle">نصائح وموضوعات في التغذية العلاجية وأسلوب الحياة الصحي.</p>
+            <span class="dt-packages__eyebrow">{{ trans('blog.title') }}</span>
+            <h1 class="dt-blog__title">{{ trans('blog.latest') }}</h1>
+            <p class="dt-blog__subtitle">{{ trans('blog.subtitle') }}</p>
         </div>
 
         {% set dt_articles = blog.articles is defined and blog.articles ? blog.articles : [] %}
@@ -36,13 +36,13 @@
                             {% if article.excerpt is defined and article.excerpt %}
                                 <p class="dt-blog-card__excerpt">{{ article.excerpt }}</p>
                             {% endif %}
-                            <a href="{{ article.url }}" class="dt-blog-card__more">اقرأ المزيد ←</a>
+                            <a href="{{ article.url }}" class="dt-blog-card__more">{{ trans('blog.read_more') }}</a>
                         </div>
                     </article>
                 {% endfor %}
             </div>
         {% else %}
-            <p class="dt-blog__empty">لا توجد مقالات بعد.</p>
+            <p class="dt-blog__empty">{{ trans('blog.empty') }}</p>
         {% endif %}
     </div>
 {% endblock %}

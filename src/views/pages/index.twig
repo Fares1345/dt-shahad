@@ -5,7 +5,13 @@
 {% extends "layouts.master" %}
 
 {% block content %}
-    {% for component in theme.components('home') %}
-        {% component component.name with {component: component} %}
-    {% endfor %}
+    {% set home_components = theme.components('home') %}
+    {% if home_components|length %}
+        {% for component in home_components %}
+            {% component component.name with {component: component} %}
+        {% endfor %}
+    {% else %}
+        {% component 'home.dt-hero' %}
+        {% component 'home.dt-packages' %}
+    {% endif %}
 {% endblock %}

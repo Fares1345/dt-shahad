@@ -5,6 +5,14 @@
  * No React, no CartContext — cart flow is 100% Salla SDK/web components.
  */
 
+function t(key, fallback) {
+  if (window.salla && salla.lang && typeof salla.lang.get === 'function') {
+    const value = salla.lang.get(key);
+    if (value && value !== key) return value;
+  }
+  return fallback;
+}
+
 const LOGO_SVG =
   '<svg viewBox="0 0 600 620" role="img" aria-label="DT. SHAHAD — Clinical Nutrition" class="dt-logo" style="width: 104px; display: block; direction: ltr; flex-shrink: 0; overflow: visible;">' +
   '<g>' +
@@ -26,7 +34,7 @@ const LOGO_SVG =
   '<line x1="58" y1="510" x2="108" y2="510" stroke="#3D472E" stroke-width="1.6"/>' +
   '<line x1="492" y1="510" x2="542" y2="510" stroke="#3D472E" stroke-width="1.6"/>' +
   '<text x="300" y="519" text-anchor="middle" fill="#3D472E" style="font-family: \'Cinzel\', serif; font-weight: 500; font-size: 24px; letter-spacing: 4px;">CLINICAL NUTRITION</text>' +
-  '<text x="300" y="575" text-anchor="middle" direction="rtl" fill="#3D472E" style="font-family: \'Noto Serif Arabic\', serif; font-weight: 500; font-size: 38px;">أخصائية تغذية علاجية</text>' +
+  '<text x="300" y="575" text-anchor="middle" direction="rtl" fill="#3D472E" style="font-family: \'Noto Serif Arabic\', serif; font-weight: 500; font-size: 38px;">' + t('brand.tagline', 'أخصائية تغذية علاجية') + '</text>' +
   '</svg>';
 
 const CHECK_SVG =
@@ -113,7 +121,7 @@ class DtPackageCard extends HTMLElement {
     this.className = featured ? 'dt-package-card dt-package-card--featured' : 'dt-package-card';
 
     this.innerHTML =
-      (featured ? '<span class="dt-package-badge">الأكثر طلبًا</span>' : '') +
+      (featured ? '<span class="dt-package-badge">' + t('packages.featured_badge', 'الأكثر طلبًا') + '</span>' : '') +
       '<div class="dt-package-logo">' + LOGO_SVG + '</div>' +
       '<h3 class="dt-package-name">' + escapeHtml(product.name) + '</h3>' +
       (duration ? '<div class="dt-package-duration">' + escapeHtml(duration) + '</div>' : '') +
@@ -131,9 +139,9 @@ class DtPackageCard extends HTMLElement {
       '<div class="dt-package-price">' + this.getPriceBlock() + '</div>' +
       '<salla-add-product-button width="wide" product-id="' + product.id + '" product-status="' +
       product.status + '" product-type="' + (product.type || 'product') + '">' +
-      (isSale ? 'اختر الباقة' : 'نفذت الكمية') +
+      (isSale ? t('common.actions.choose_package', 'اختر الباقة') : t('common.actions.out_of_stock', 'نفذت الكمية')) +
       '</salla-add-product-button>' +
-      '<a class="dt-package-details" href="' + escapeHtml(product.url) + '">تفاصيل الباقة ←</a>';
+      '<a class="dt-package-details" href="' + escapeHtml(product.url) + '">' + t('packages.details', 'تفاصيل الباقة ←') + '</a>';
   }
 }
 

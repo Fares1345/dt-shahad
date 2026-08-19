@@ -1,0 +1,37 @@
+{#
+| Variable   | Type   | Description                |
+|------------|--------|----------------------------|
+| page       | object |                            |
+| page.title | string |                            |
+| user       | User   |                            |
+| user.avatar| string |                            |
+#}
+{% extends "layouts.master" %}
+
+{% block title %}{{ page.title is defined and page.title ? page.title|striptags : '' }}{% endblock %}
+
+{% block content %}
+    <div class="dt-customer">
+        <div class="dt-customer__grid">
+            <aside class="dt-customer__sidebar">
+                {% if is_page('customer.profile') %}
+                    <div class="dt-customer__avatar">
+                        <salla-file-upload data-testid="store-profile-avatar-upload" profile-image value="{{ user.avatar is defined ? user.avatar : '' }}">
+                            <span class="dt-customer__avatar-placeholder">
+                                <span class="sicon-user"></span>
+                            </span>
+                        </salla-file-upload>
+                    </div>
+                {% endif %}
+                <salla-user-menu data-testid="store-sidebar-user-menu" inline></salla-user-menu>
+            </aside>
+
+            <div class="dt-customer__main">
+                {% block inner_title %}
+                    <h1 class="dt-customer__title">{{ page.title is defined and page.title ? page.title : '' }}</h1>
+                {% endblock %}
+                {% block inner_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

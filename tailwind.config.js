@@ -131,8 +131,5 @@ module.exports = {
       },
     },
   },
-  corePlugins: {
-    outline: false,
-  },
   plugins: [],
 };

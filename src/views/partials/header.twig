@@ -1,27 +1,25 @@
 {# DT. SHAHAD Header — static port of app/components/layout/DtSiteHeader.tsx #}
 <header class="dt-header" data-testid="store-header">
-    <input type="checkbox" id="dt-menu-toggle" class="dt-menu-toggle" aria-hidden="true">
-
     <div class="dt-header__inner">
-        <a href="{{ link('/') }}" class="dt-logo-link" aria-label="الرئيسية">
+        <a href="{{ link('/') }}" class="dt-logo-link" aria-label="{{ trans('common.titles.home') }}">
             {% include 'partials.logo' with { width: 96 } %}
         </a>
 
-        <nav class="dt-nav" aria-label="التنقل الرئيسي">
-            <a href="{{ link('/') }}" class="dt-nav__link{{ is_page('index') ? ' is-active' : '' }}">الرئيسية</a>
-            <a href="{{ link('/') }}#packages" class="dt-nav__link">الباقات</a>
-            <a href="{{ link('/about') }}" class="dt-nav__link{{ is_page('page', 'about') ? ' is-active' : '' }}">من نحن</a>
-            <a href="{{ link('/blog') }}" class="dt-nav__link{{ is_page('blog') ? ' is-active' : '' }}">المدونة</a>
+        <nav class="dt-nav" aria-label="{{ trans('header.nav.label') }}">
+            <a href="{{ link('/') }}" class="dt-nav__link{{ is_page('index') ? ' is-active' : '' }}">{{ trans('common.titles.home') }}</a>
+            <a href="{{ link('/') }}#packages" class="dt-nav__link">{{ trans('header.nav.packages') }}</a>
+            <a href="{{ link('/about') }}" class="dt-nav__link{{ is_page('page', 'about') ? ' is-active' : '' }}">{{ trans('header.nav.about') }}</a>
+            <a href="{{ link('/blog') }}" class="dt-nav__link{{ is_page('blog') ? ' is-active' : '' }}">{{ trans('header.nav.blog') }}</a>
         </nav>
 
         <div class="dt-header__actions">
-            <a href="{{ link('/search') }}" class="dt-icon-btn" aria-label="بحث">
+            <a href="{{ link('/search') }}" class="dt-icon-btn" aria-label="{{ trans('header.aria.search') }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.3-4.3"></path>
                 </svg>
             </a>
-            <a href="{{ link('/cart') }}" class="dt-icon-btn" aria-label="سلة التسوق">
+            <a href="{{ link('/cart') }}" class="dt-icon-btn" aria-label="{{ trans('header.aria.cart') }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="8" cy="21" r="1"></circle>
                     <circle cx="19" cy="21" r="1"></circle>
@@ -31,29 +29,31 @@
                     <span id="dt-cart-count">{{ cart.items_count }}</span>
                 </span>
             </a>
-            <a href="{{ link('/customer/profile') }}" class="dt-icon-btn" aria-label="الحساب">
+            <a href="{{ link('/customer/profile') }}" class="dt-icon-btn" aria-label="{{ trans('header.aria.account') }}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
             </a>
-            <label for="dt-menu-toggle" class="dt-menu-btn" role="button" aria-label="فتح القائمة">
-                <svg class="dt-menu-icon dt-menu-icon--burger" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <button type="button" id="dt-menu-toggle" class="dt-menu-btn" aria-expanded="false"
+                        aria-controls="dt-mobile-menu" aria-label="{{ trans('header.aria.open_menu') }}"
+                        data-label-close="{{ trans('header.aria.close_menu') }}">
+                <svg class="dt-menu-icon dt-menu-icon--burger" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                     <path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path>
                 </svg>
-                <svg class="dt-menu-icon dt-menu-icon--close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <svg class="dt-menu-icon dt-menu-icon--close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
                     <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
                 </svg>
-            </label>
+            </button>
         </div>
     </div>
 
-    <div class="dt-mobile-menu">
-        <nav aria-label="القائمة">
-            <a href="{{ link('/') }}" class="dt-mobile-menu__link">الرئيسية</a>
-            <a href="{{ link('/') }}#packages" class="dt-mobile-menu__link">الباقات</a>
-            <a href="{{ link('/about') }}" class="dt-mobile-menu__link">من نحن</a>
-            <a href="{{ link('/blog') }}" class="dt-mobile-menu__link">المدونة</a>
+    <div class="dt-mobile-menu" id="dt-mobile-menu">
+        <nav aria-label="{{ trans('header.mobile.label') }}">
+            <a href="{{ link('/') }}" class="dt-mobile-menu__link">{{ trans('common.titles.home') }}</a>
+            <a href="{{ link('/') }}#packages" class="dt-mobile-menu__link">{{ trans('header.nav.packages') }}</a>
+            <a href="{{ link('/about') }}" class="dt-mobile-menu__link">{{ trans('header.nav.about') }}</a>
+            <a href="{{ link('/blog') }}" class="dt-mobile-menu__link">{{ trans('header.nav.blog') }}</a>
         </nav>
     </div>
 </header>
@@ -101,5 +101,31 @@
         } else {
             document.addEventListener('theme::ready', init, { once: true });
         }
+    })();
+
+    (function () {
+        var btn = document.getElementById('dt-menu-toggle');
+        var menu = document.getElementById('dt-mobile-menu');
+        if (!btn || !menu) return;
+
+        function setOpen(open) {
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            btn.setAttribute('aria-label', open ? btn.getAttribute('data-label-close') : btn.getAttribute('data-label-open'));
+            menu.classList.toggle('dt-mobile-menu--open', open);
+        }
+
+        btn.setAttribute('data-label-open', btn.getAttribute('aria-label'));
+        btn.addEventListener('click', function () {
+            setOpen(btn.getAttribute('aria-expanded') !== 'true');
+        });
+        menu.addEventListener('click', function (event) {
+            if (event.target.closest('a')) setOpen(false);
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') {
+                setOpen(false);
+                btn.focus();
+            }
+        });
     })();
 </script>

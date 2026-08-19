@@ -32,18 +32,18 @@
 {% block content %}
     <div class="dt-cart">
         <div class="dt-cart__container">
-            <h1 class="dt-cart__title">سلة التسوق</h1>
+            <h1 class="dt-cart__title">{{ trans('cart.title') }}</h1>
 
             {% if cart.items|length %}
                 {% if cart.free_shipping_bar %}
                     <div class="dt-cart__shipping-bar" data-testid="store-cart-free-shipping">
                         <div class="dt-cart__shipping-head">
-                            <span class="dt-cart__shipping-title">الشحن المجاني</span>
+                            <span class="dt-cart__shipping-title">{{ trans('cart.free_shipping.title') }}</span>
                             <span class="dt-cart__shipping-msg">
                                 {% if cart.free_shipping_bar.has_free_shipping %}
-                                    حصلت على شحن مجاني
+                                    {{ trans('cart.free_shipping.achieved') }}
                                 {% else %}
-                                    أضف {{ cart.free_shipping_bar.remaining|money }} للحصول على شحن مجاني
+                                    {{ trans('cart.free_shipping.remaining', { amount: cart.free_shipping_bar.remaining|money }) }}
                                 {% endif %}
                             </span>
                         </div>
@@ -68,16 +68,16 @@
                                     <a href="{{ item.url }}" class="dt-cart-item__name">{{ item.product_name }}</a>
                                     <div class="dt-cart-item__price">{{ item.total|money }}</div>
                                     {% if item.is_hidden_quantity %}
-                                        <input type="hidden" value="{{ item.quantity }}" name="quantity" aria-label="الكمية">
+                                        <input type="hidden" value="{{ item.quantity }}" name="quantity" aria-label="{{ trans('common.elements.quantity') }}">
                                         <span class="dt-cart-item__qty-static">{{ item.quantity }}</span>
                                     {% else %}
                                         <salla-quantity-input cart-item-id="{{ item.id }}" value="{{ item.quantity }}"
                                                               max="{{ item.max_quantity }}" name="quantity"
-                                                              aria-label="الكمية"></salla-quantity-input>
+                                                              aria-label="{{ trans('common.elements.quantity') }}"></salla-quantity-input>
                                     {% endif %}
                                 </div>
 
-                                <button type="button" class="dt-cart-item__remove" aria-label="حذف من السلة"
+                                <button type="button" class="dt-cart-item__remove" aria-label="{{ trans('cart.remove') }}"
                                         onclick="salla.cart.deleteItem('{{ item.id }}').then(() => document.querySelector('#item-{{ item.id }}').remove())">✕</button>
                             </form>
                         {% endfor %}
@@ -92,8 +92,8 @@
                 </div>
             {% else %}
                 <div class="dt-cart__empty" data-testid="store-cart-empty">
-                    <p class="dt-cart__empty-text">سلة التسوق فارغة</p>
-                    <a href="{{ link('/') }}" class="dt-btn dt-btn--primary">تصفح الباقات</a>
+                    <p class="dt-cart__empty-text">{{ trans('cart.empty') }}</p>
+                    <a href="{{ link('/') }}" class="dt-btn dt-btn--primary">{{ trans('cart.empty_cta') }}</a>
                 </div>
             {% endif %}
         </div>

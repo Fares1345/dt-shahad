@@ -1,0 +1,154 @@
+{#
+| Variable        | Type         | Description                                                    |
+|-----------------|--------------|----------------------------------------------------------------|
+| page            | object       |                                                                |
+| page.title      | string       | *could be html                                                 |
+| page.slug       | string       | ex: "product.index", "product.index.search", "product.index.offers" |
+| page.id         | int          |                                                                |
+| category        | ?Category    |                                                                |
+| category.name   | string       |                                                                |
+| category.url    | string       |                                                                |
+| filters         | bool         | is filters allowed here or not                                 |
+| sort_options[]  | SortList[]   |                                                                |
+| sort_options[].id          | string | ourSuggest, bestSell, topRated, priceFromTopToLow, priceFromLowToTop |
+| sort_options[].name        | string |                                                                |
+| sort_options[].is_selected | bool   | Is current page sorted by it                                   |
+| search_query    | ?string      |                                                                |
+#}
+{% extends "layouts.master" %}
+
+{% block title %}{{ page.title is defined and page.title ? page.title|striptags : '' }}{% endblock %}
+
+{% block content %}
+    <div class="dt-listing">
+        <div class="dt-listing__head">
+            <h1 class="dt-listing__title" id="page-main-title">{{ page.title is defined and page.title ? page.title|raw : '' }}</h1>
+
+            {% if sort_options is defined and sort_options|length %}
+                <div class="dt-listing__sort">
+                    <label for="product-filter">{{ trans('pages.listing.sorting') }}</label>
+                    <select id="product-filter">
+                        {% for sort in sort_options %}
+                            <option value="{{ sort.id }}" {{ sort.is_selected is defined and sort.is_selected ? 'selected' : '' }}>{{ sort.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="dt-listing__body">
+            {% if filters is defined and filters %}
+                <button type="button" class="dt-listing__filters-trigger" id="dt-filters-trigger"
+                        aria-expanded="false" aria-controls="dt-filters-drawer">
+                    {{ trans('pages.listing.filters') }}
+                </button>
+
+                <aside class="dt-listing__filters" id="dt-filters-drawer">
+                    <div class="dt-listing__filters-head">
+                        <span class="dt-listing__filters-title">{{ trans('pages.listing.filters') }}</span>
+                        <button type="button" class="dt-listing__filters-close" id="dt-filters-close"
+                                aria-label="{{ trans('header.aria.close_menu') }}">&times;</button>
+                    </div>
+                    <salla-filters data-testid="store-products-filters"></salla-filters>
+                </aside>
+                <div class="dt-listing__overlay" id="dt-filters-overlay"></div>
+            {% endif %}
+
+            <div class="dt-listing__main">
+                <salla-products-list data-testid="store-products-list"
+                                     source="{{ page.slug is defined and page.slug ? page.slug : 'product.index' }}"
+                                     source-value="{{ page.id is defined ? page.id : '' }}"
+                                     {{ filters is defined and filters ? 'filters-Results' : '' }}></salla-products-list>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script data-cfasync="false">
+        (function () {
+            var inited = false;
+
+            function init() {
+                if (inited) return;
+                inited = true;
+                var salla = window.salla;
+                if (!salla) return;
+
+                var list = document.querySelector('salla-products-list');
+                var sortSelect = document.getElementById('product-filter');
+
+                if (list && sortSelect) {
+                    var params = new URLSearchParams(window.location.search);
+                    if (params.has('sort')) {
+                        sortSelect.value = params.get('sort');
+                    }
+                    sortSelect.addEventListener('change', function () {
+                        var value = sortSelect.value;
+                        if (salla.helpers && typeof salla.helpers.addParamToUrl === 'function') {
+                            window.history.replaceState(null, null, salla.helpers.addParamToUrl('sort', value));
+                        }
+                        list.sortBy = value;
+                        if (typeof list.reload === 'function') {
+                            list.reload();
+                        }
+                        list.setAttribute('filters', JSON.stringify({ sort: value }));
+                    });
+                }
+
+                if (salla.event && typeof salla.event.on === 'function') {
+                    salla.event.on('salla-products-list::products.fetched', function (res) {
+                        if (res && res.title) {
+                            var title = document.getElementById('page-main-title');
+                            if (title) title.innerHTML = res.title;
+                        }
+                    });
+                }
+
+                var drawer = document.getElementById('dt-filters-drawer');
+                var overlay = document.getElementById('dt-filters-overlay');
+                var trigger = document.getElementById('dt-filters-trigger');
+                var close = document.getElementById('dt-filters-close');
+                if (!drawer) return;
+
+                function setOpen(open) {
+                    drawer.classList.toggle('dt-listing__filters--open', open);
+                    if (overlay) overlay.classList.toggle('dt-listing__overlay--visible', open);
+                    if (trigger) trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+                }
+
+                if (trigger) {
+                    trigger.addEventListener('click', function () {
+                        setOpen(!drawer.classList.contains('dt-listing__filters--open'));
+                    });
+                }
+                if (close) {
+                    close.addEventListener('click', function () { setOpen(false); });
+                }
+                if (overlay) {
+                    overlay.addEventListener('click', function () { setOpen(false); });
+                }
+                document.addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape' && drawer.classList.contains('dt-listing__filters--open')) {
+                        setOpen(false);
+                        if (trigger) trigger.focus();
+                    }
+                });
+                if (salla.event && typeof salla.event.on === 'function') {
+                    salla.event.on('salla-filters::changed', function () { setOpen(false); });
+                }
+            }
+
+            if (document.readyState !== 'loading') {
+                init();
+            } else {
+                document.addEventListener('DOMContentLoaded', init);
+            }
+            if (window.salla && typeof salla.onReady === 'function') {
+                salla.onReady(init);
+            } else {
+                document.addEventListener('theme::ready', init, { once: true });
+            }
+        })();
+    </script>
+{% endblock %}

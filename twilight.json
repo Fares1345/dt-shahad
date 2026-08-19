@@ -7,124 +7,14 @@
     "repository": "https://github.com/Fares1345/dt-shahad",
     "author_email": "support@salla.sa",
     "description": {
-        "ar": "مجموعة كبيرة من المزايا لدعم تجارتك وتقديم تجربة تسوق مثيرة لعملائك",
-        "en": "A wide range of features to support your business and provide an exciting shopping experience for your customers"
+        "ar": "قالب متجر DT. SHAHAD — تغذية علاجية: واجهة أنيقة تعرض الباقات والمنتجات ومقالات المدونة",
+        "en": "DT. SHAHAD storefront theme — clinical nutrition: an elegant storefront showcasing packages, products and blog articles"
     },
     "features": [
-        "mega-menu",
-        "fonts",
         "color",
-        "breadcrumb",
-        "unite-cards-height",
-        "component-featured-products",
-        "component-fixed-banner",
-        "component-fixed-products",
-        "component-products-slider",
-        "component-photos-slider",
-        "component-parallax-background",
-        "component-testimonials",
-        "component-square-photos",
-        "component-store-features",
-        "component-youtube",
-        "menu-images",
-        "filters"
+        "component-products-slider"
     ],
-    "settings": [
-        {
-            "type": "static",
-            "format": "title",
-            "id": "static-label-general",
-            "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> خيارات عامة</h6></div>",
-            "variant": "h6"
-        },
-        {
-            "type": "boolean",
-            "id": "is_more_button_enabled",
-            "label": "عرض (زر الكل) في الصفحة الرئيسية",
-            "format": "switch",
-            "required": false,
-            "value": true,
-            "selected": true
-        },
-        {
-            "type": "boolean",
-            "icon": "sicon-toggle-off",
-            "label": "تفعيل إشعار الإضافة للسلة المحسن",
-            "description": null,
-            "id": "enable_add_product_toast",
-            "format": "switch",
-            "required": false,
-            "value": true,
-            "selected": true
-        },
-        {
-            "type": "boolean",
-            "icon": "sicon-toggle-off",
-            "label": "اظهار الوسوم",
-            "description": null,
-            "id": "show_tags",
-            "format": "switch",
-            "required": false,
-            "value": true,
-            "selected": true
-        },
-        {
-            "type": "static",
-            "id": "static-line1",
-            "format": "line"
-        },
-        {
-            "type": "static",
-            "format": "title",
-            "id": "static-label-product",
-            "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> خيارات صفحة المنتج</h6></div>",
-            "variant": "h6"
-        },
-        {
-            "type": "boolean",
-            "icon": "sicon-toggle-off",
-            "label": "إظهار مسار التنقل في صفحة المنتج",
-            "description": null,
-            "id": "product_show_breadcrumbs",
-            "format": "switch",
-            "required": false,
-            "value": true,
-            "selected": true
-        },
-        {
-            "type": "boolean",
-            "icon": "sicon-toggle-off",
-            "label": "إظهار مسار التنقل في صفحة قائمة المنتجات",
-            "description": null,
-            "id": "product_index_show_breadcrumbs",
-            "format": "switch",
-            "required": false,
-            "value": true,
-            "selected": true
-        },
-        {
-            "type": "boolean",
-            "icon": "sicon-toggle-off",
-            "label": "إظهار زر \"أعلمني عند التوفر\" في بطاقة المنتج",
-            "description": "يظهر زر إشعار التوفر في بطاقات المنتجات التي نفذت كميتها",
-            "id": "notify_when_available_in_card",
-            "format": "switch",
-            "required": false,
-            "value": true,
-            "selected": true
-        },
-        {
-            "type": "boolean",
-            "icon": "sicon-toggle-off",
-            "label": "تثبيت زر الإضافة والكمية أسفل شاشة الجوال",
-            "description": null,
-            "id": "sticky_add_to_cart",
-            "format": "switch",
-            "required": false,
-            "value": true,
-            "selected": true
-        }
-    ],
+    "settings": [],
     "components": [
         {
             "key": "2f8a1c4e-9b3d-4f2a-8c1e-a7d5b6c3d0e1",
@@ -239,14 +129,9 @@
                     "label": "المنتجات المعروضة",
                     "id": "products",
                     "format": "dropdown-list",
-                    "description": "اختر منتجات المتجر التي تظهر كباقات. إذا تُركت فارغة تُعرض أحدث المنتجات تلقائيًا",
+                    "description": "اختر منتجات المتجر التي تظهر كباقات. إذا تُركت فارغة يظهر تنبيه يطلب اختيار الباقات",
                     "labelHTML": null,
-                    "selected": [
-                        319116126,
-                        1094202461,
-                        2001933660,
-                        628553299
-                    ],
+                    "selected": [],
                     "options": [],
                     "source": "products",
                     "multichoice": true,
@@ -254,12 +139,7 @@
                     "required": false,
                     "maxLength": 8,
                     "minLength": 0,
-                    "value": [
-                        319116126,
-                        1094202461,
-                        2001933660,
-                        628553299
-                    ]
+                    "value": []
                 },
                 {
                     "type": "items",
@@ -269,17 +149,13 @@
                     "format": "dropdown-list",
                     "description": "منتج واحد يظهر مميزًا مع شارة «الأكثر طلبًا»",
                     "labelHTML": null,
-                    "selected": [
-                        319116126
-                    ],
+                    "selected": [],
                     "options": [],
                     "source": "products",
                     "multichoice": false,
                     "searchable": true,
                     "required": false,
-                    "value": [
-                        319116126
-                    ]
+                    "value": []
                 }
             ]
         }

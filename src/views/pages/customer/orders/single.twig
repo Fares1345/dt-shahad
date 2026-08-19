@@ -1,0 +1,357 @@
+{#
+| Variable                  | Type              | Description                                     |
+|---------------------------|-------------------|-------------------------------------------------|
+| page                      | object            |                                                 |
+| page.title                | string            |                                                 |
+| page.slug                 | string            |                                                 |
+| order                     | Order             |                                                 |
+| order.id, .reference_id, .created_at, .sub_total, .total, .can_reorder, .can_cancel, .payment_url, .is_pending_payment, .pending_payment_ends_in | |
+| order.shipping            | ?object           | .name, .number, .logo, .cost                    |
+| order.tax                 | ?object           | .amount, .percent                               |
+| order.status              | object            | .name, .icon, .color                            |
+| order.items[]             | OrderItem[]       | .name, .image, .price, .quantity, .total, .product, .note, .attachments |
+| order.options             | OrderOption[]     |                                                 |
+| order.discounts           | array             |                                                 |
+| order.rating              | ?OrderRatings     | .store, .shipping                               |
+| order.links[]             | array             | .url, .label, .type                             |
+| can_print_invoice         | bool              |                                                 |
+#}
+{% extends "layouts.customer" %}
+{% block inner_title %}
+    <div class="dt-order-head">
+        <h1 class="dt-customer__title">{{ page.title is defined and page.title ? page.title : '' }}</h1>
+        <div class="dt-order-head__actions">
+            {% if order.links is defined and order.links|length %}
+                {% for link in order.links %}
+                    <a href="{{ link.url }}" class="dt-order-head__link" target="_blank" rel="noopener">
+                        {{ link.label }}
+                    </a>
+                {% endfor %}
+            {% endif %}
+            {% if can_print_invoice is defined and can_print_invoice %}
+                <salla-button fill="outline" size="small" onclick="window.open('{{ order.print_url() }}', '_blank', 'toolbar=yes, scrollbars=yes, resizable=yes, width=900, height=700');">
+                    <i class="sicon-printer2" aria-hidden="true"></i>
+                    {{ trans('pages.orders.print') }}
+                </salla-button>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block inner_content %}
+    <div class="dt-order">
+        {% hook 'customer:orders.single.details.start' %}
+
+        <div class="dt-order-head dt-order-head--meta">
+            <div class="dt-order-head__meta">
+                <span class="dt-order-head__label">{{ trans('pages.orders.date') }}</span>
+                <b>{{ order.created_at|date|number }}</b>
+            </div>
+            <div class="dt-order-head__meta">
+                {% if order.is_pending_payment is defined and order.is_pending_payment and order.pending_payment_ends_in == 0 %}
+                    <span class="dt-order-head__danger">{{ trans('pages.orders.pending_payment_expired') }}</span>
+                {% else %}
+                    <span class="dt-order-head__status" style="color: {{ order.status.color }}">
+                        <i class="{{ order.status.icon }}" aria-hidden="true"></i>
+                        {{ order.status.name }}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        {% for package in order.packages %}
+            <div class="dt-order-card">
+                {% if package.shipping_company is defined and package.shipping_company and not order.is_pickable %}
+                    <div class="dt-order-ship">
+                        <span class="dt-order-ship__company">
+                            {% if package.shipping_company.logo %}
+                                <img src="{{ package.shipping_company.logo }}" alt="{{ package.shipping_company.name }}" class="dt-order-ship__logo">
+                            {% endif %}
+                            {{ package.shipping_company.name }}
+                        </span>
+                        <span class="dt-order-ship__track">
+                            {% if package.shipping_company.number %}
+                                <span>{{ trans('pages.orders.shipment_no') }}: <b>{{ package.shipping_company.number|raw }}</b></span>
+                            {% endif %}
+                            {% if package.is_delivered %}
+                                <span>{{ trans('pages.orders.status') }}: <b style="color: {{ package.status.color }}">{{ package.status.name }}</b></span>
+                            {% elseif package.shipping_company.tracing_link %}
+                                <a href="{{ package.shipping_company.tracing_link|raw }}" target="_blank" rel="noopener" class="dt-order-ship__link">
+                                    <i class="sicon-shipping" aria-hidden="true"></i>
+                                    {{ trans('pages.orders.tracking_url') }}
+                                </a>
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+
+                {% for item in package.items %}
+                    <div data-testid="store-order-item-{{ item.id }}" data-order-item-id="{{ item.id }}" data-order-item-product-id="{{ item.product.id }}" class="dt-order-item">
+                        {% if item.product %}
+                            <a href="{{ item.product.url }}" class="dt-order-item__media">
+                                {% if item.image %}
+                                    <img src="{{ item.image }}" alt="{{ item.name }}" class="dt-order-item__thumb">
+                                {% endif %}
+                            </a>
+                        {% endif %}
+
+                        <div class="dt-order-item__body">
+                            {% if item.product %}
+                                <a href="{{ item.product.url }}" class="dt-order-item__name">{{ item.name }}</a>
+                            {% else %}
+                                <span class="dt-order-item__name">{{ item.name }}</span>
+                            {% endif %}
+
+                            <div class="dt-order-item__row">
+                                <span>{{ trans('pages.products.quantity') }}</span>
+                                <b>{{ item.quantity }}</b>
+                            </div>
+                            <div class="dt-order-item__row">
+                                <span>{{ trans('pages.products.price') }}</span>
+                                <b>{{ item.price|money }}</b>
+                            </div>
+                            <div class="dt-order-item__row">
+                                <span>{{ trans('pages.orders.total') }}</span>
+                                <b>{{ item.total|money }}</b>
+                            </div>
+
+                            <salla-order-details order-details="{{ item | json_encode }}"></salla-order-details>
+
+                            {% if item.note %}
+                                <p class="dt-order-item__note">
+                                    <span>{{ trans('common.elements.note') }}: </span>{{ item.note }}
+                                </p>
+                            {% endif %}
+
+                            {% if item.attachments is defined and item.attachments %}
+                                <div class="dt-order-item__attachments">
+                                    <span class="dt-order-item__attachments-label">{{ trans('pages.products.attachments') }}</span>
+                                    {% for attachment in item.attachments %}
+                                        <a href="{{ attachment.url }}" target="_blank" rel="noopener">
+                                            {% if attachment.type == 'image' %}
+                                                <img src="{{ attachment.url }}" alt="{{ item.name }}" class="dt-order-item__attachment-thumb">
+                                            {% else %}
+                                                {{ trans('pages.orders.file_url') }}
+                                            {% endif %}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if order.options is defined and order.options|length %}
+            <div class="dt-order-card">
+                <h2 class="dt-order-card__title">{{ trans('pages.cart.cart_options') }}</h2>
+                <table class="dt-order-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">{{ trans('pages.order.option_name') }}</th>
+                        <th scope="col">{{ trans('pages.order.option_content') }}</th>
+                        <th scope="col">{{ trans('pages.products.price') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in order.options %}
+                        {% for option in item.options %}
+                            <tr>
+                                <td>{{ option.name }}:</td>
+                                <td>{{ option.value }}</td>
+                                <td><b>{{ option.price|money }}</b></td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        <salla-order-totals-card data-testid="store-order-totals" order="{{ order }}"></salla-order-totals-card>
+
+        {% if order.can_reorder or order.can_cancel or order.is_pending_payment %}
+            <div class="dt-order-card">
+                {% if order.can_reorder or order.is_pending_payment %}
+                    <div class="dt-order-actions">
+                        {% if order.is_pending_payment %}
+                            {% if order.pending_payment_ends_in == 0 %}
+                                <span class="dt-order-head__danger">{{ trans('pages.orders.pending_payment_expired') }}</span>
+                            {% else %}
+                                <salla-button width="wide" href="{{ order.payment_url }}">
+                                    <i class="sicon-wallet" aria-hidden="true"></i>
+                                    <span>{{ trans('pages.orders.finish_payment') }}</span>
+                                </salla-button>
+                            {% endif %}
+                        {% else %}
+                            <div class="dt-order-actions__text">
+                                <h3 class="dt-order-actions__title">{{ trans('pages.orders.reorder') }}</h3>
+                                <p>{{ trans('pages.orders.reorder_description') }}</p>
+                            </div>
+                            <salla-button data-testid="store-order-reorder-btn" shape="link" onclick="document.querySelector('#reorder-modal').open()">
+                                <i class="sicon-rotate" aria-hidden="true"></i>
+                                <span>{{ trans('pages.orders.reorder') }}</span>
+                            </salla-button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if order.can_cancel %}
+                    <div class="dt-order-actions">
+                        <div class="dt-order-actions__text">
+                            <h3 class="dt-order-actions__title">{{ trans('pages.orders.cancel') }}</h3>
+                            <p>{{ trans('pages.order.order_cancelation_desc') }}</p>
+                        </div>
+                        <salla-button data-testid="store-order-cancel-btn" shape="link" color="danger" onclick="document.querySelector('#modal-order-cancel').open()">
+                            <i class="sicon-cancel-circle" aria-hidden="true"></i>
+                            <span>{{ trans('pages.orders.cancel') }}</span>
+                        </salla-button>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if order.can_reorder %}
+                <salla-modal width="sm" sub-title="{{ trans('pages.orders.reorder_confirmation')|raw }}"
+                             icon="sicon-rotate" id="reorder-modal" icon-style="success"
+                             modal-title="{{ trans('pages.orders.reorder') }}">
+                    <div slot="footer" class="dt-order-modal-actions">
+                        <salla-button id="btn-reorder" width="wide">
+                            {{ trans('common.elements.ok') }}
+                        </salla-button>
+                        <salla-button class="dt-order-modal-actions__cancel" fill="outline" color="light" onclick="document.querySelector('#reorder-modal').close()">
+                            {{ trans('common.elements.cancel') }}
+                        </salla-button>
+                    </div>
+                </salla-modal>
+            {% endif %}
+
+            {% if order.can_cancel %}
+                <salla-modal width="sm" sub-title="{{ trans('pages.orders.cancel_confirmation') }}"
+                             icon="sicon-cancel" id="modal-order-cancel" icon-style="error"
+                             modal-title="{{ trans('common.elements.warning') }}">
+                    <div slot="footer" class="dt-order-modal-actions">
+                        <salla-button id="confirm-cancel" color="danger" class="dt-order-modal-actions__confirm">
+                            {{ trans('common.elements.ok') }}
+                        </salla-button>
+                        <salla-button class="dt-order-modal-actions__cancel" fill="outline" color="light" onclick="document.querySelector('#modal-order-cancel').close()">
+                            {{ trans('common.elements.cancel') }}
+                        </salla-button>
+                    </div>
+                </salla-modal>
+            {% endif %}
+        {% endif %}
+
+        {% if order.rating.store.stars %}
+            <section class="dt-order-card dt-order-rate">
+                <div>
+                    <h2 class="dt-order-card__title">{{ trans('pages.rating.rate_the_store') }}</h2>
+                    <p class="dt-order-rate__content">{{ order.rating.store.content|raw }}</p>
+                    <salla-rating-stars with-label value="{{ order.rating.store.stars }}"></salla-rating-stars>
+                </div>
+                {% if store.settings.rating.allow_update %}
+                    <div class="dt-order-rate__actions">
+                        {% if order.rating.store.can_update %}
+                            <salla-button fill="outline" color="dark" size="medium" onclick="salla.event.dispatch('rating::edit', {type: 'store', feedback_id: '{{ order.rating.store.id }}' })">
+                                <i class="sicon-format-border-color" aria-hidden="true"></i>
+                            </salla-button>
+                        {% endif %}
+                        {% if order.rating.store.can_update %}
+                            <salla-button fill="outline" color="danger" size="medium" onclick="salla.event.dispatch('rating::delete', {feedback_id: '{{ order.rating.store.id }}' })">
+                                <i class="sicon-trash-2" aria-hidden="true"></i>
+                            </salla-button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        {% if order.rating.shipping.stars %}
+            <section class="dt-order-card dt-order-rate">
+                <div>
+                    <h2 class="dt-order-card__title">{{ trans('pages.rating.rate_shipping') }}</h2>
+                    <p class="dt-order-rate__content">{{ order.rating.shipping.content|raw }}</p>
+                    <salla-rating-stars with-label value="{{ order.rating.shipping.stars }}"></salla-rating-stars>
+                </div>
+                {% if store.settings.rating.allow_update %}
+                    <div class="dt-order-rate__actions">
+                        {% if order.rating.shipping.can_update %}
+                            <salla-button fill="outline" color="dark" size="medium" onclick="salla.event.dispatch('rating::edit', {type: 'shipping', feedback_id: '{{ order.rating.shipping.id }}' })">
+                                <i class="sicon-format-border-color" aria-hidden="true"></i>
+                            </salla-button>
+                        {% endif %}
+                        {% if order.rating.shipping.can_update %}
+                            <salla-button fill="outline" color="danger" size="medium" onclick="salla.event.dispatch('rating::delete', {feedback_id: '{{ order.rating.shipping.id }}' })">
+                                <i class="sicon-trash-2" aria-hidden="true"></i>
+                            </salla-button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        {% if order.can_rate or store.settings.rating.allow_update %}
+            <salla-rating-modal data-testid="store-order-rating-modal"></salla-rating-modal>
+        {% endif %}
+
+        {% hook 'customer:orders.single.details.end' %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script data-cfasync="false">
+        (function () {
+            var inited = false;
+
+            function init() {
+                if (inited) return;
+                inited = true;
+                var salla = window.salla;
+                if (!salla || !salla.order) return;
+
+                var reorderBtn = document.getElementById('btn-reorder');
+                var reorderModal = document.getElementById('reorder-modal');
+                var cancelBtn = document.getElementById('confirm-cancel');
+                var cancelModal = document.getElementById('modal-order-cancel');
+
+                if (reorderBtn && reorderModal) {
+                    reorderBtn.addEventListener('click', function () {
+                        if (typeof reorderBtn.load === 'function') reorderBtn.load();
+                        salla.order.createCartFromOrder()
+                            .then(function () {
+                                if (typeof reorderBtn.stop === 'function') reorderBtn.stop();
+                                if (typeof reorderModal.hide === 'function') reorderModal.hide();
+                            });
+                    });
+                }
+
+                if (cancelBtn && cancelModal) {
+                    cancelBtn.addEventListener('click', function () {
+                        if (typeof cancelBtn.load === 'function') cancelBtn.load();
+                        salla.order.cancel()
+                            .then(function () {
+                                if (typeof cancelBtn.stop === 'function') cancelBtn.stop();
+                                if (typeof cancelModal.hide === 'function') cancelModal.hide();
+                                window.location.reload();
+                            })
+                            .catch(function () {
+                                if (typeof cancelBtn.stop === 'function') cancelBtn.stop();
+                                if (typeof cancelModal.hide === 'function') cancelModal.hide();
+                            });
+                    });
+                }
+            }
+
+            if (document.readyState !== 'loading') {
+                init();
+            } else {
+                document.addEventListener('DOMContentLoaded', init);
+            }
+            if (window.salla && typeof salla.onReady === 'function') {
+                salla.onReady(init);
+            } else {
+                document.addEventListener('theme::ready', init, { once: true });
+            }
+        })();
+    </script>
+{% endblock %}

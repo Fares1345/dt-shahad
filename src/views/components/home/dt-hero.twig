@@ -5,9 +5,9 @@
 | subtitle   | string | النص التوضيحي          |
 | image      | string | صورة الواجهة           |
 #}
-{% set hero_badge = badge is defined and badge ? badge : 'خطط غذائية مخصصة ٠١٠٠٪' %}
-{% set hero_title = title is defined and title ? title : 'تغذية مصممة\nلحياتك' %}
-{% set hero_subtitle = subtitle is defined and subtitle ? subtitle : 'خطط غذائية مدروسة تساعدك على بناء أسلوب حياة أكثر توازنًا، بطريقة تناسب احتياجاتك وروتينك اليومي.' %}
+{% set hero_badge = badge is defined and badge ? badge : trans('hero.badge') %}
+{% set hero_title = title is defined and title ? title : trans('hero.title') %}
+{% set hero_subtitle = subtitle is defined and subtitle ? subtitle : trans('hero.subtitle') %}
 {% set hero_image = image is defined and image ? image : '/assets/images/hero.jpg' %}
 {% set title_lines = hero_title|split('\n') %}
 {% set title_main = title_lines[0] %}
@@ -30,26 +30,24 @@
         <p class="dt-hero__subtitle">{{ hero_subtitle }}</p>
 
         <div class="dt-hero__cta">
-            <a class="dt-hero__btn dt-hero__btn--primary" href="{{ link('/') }}#packages">اختر باقتك</a>
-            <a class="dt-hero__btn dt-hero__btn--ghost" href="{{ link('/about') }}">اكتشف DT. SHAHAD</a>
+            <a class="dt-hero__btn dt-hero__btn--primary" href="{{ link('/') }}#packages">{{ trans('hero.cta.primary') }}</a>
+            <a class="dt-hero__btn dt-hero__btn--ghost" href="{{ link('/about') }}">{{ trans('hero.cta.secondary') }}</a>
         </div>
 
-        <div class="dt-hero__stats">
-            <div class="dt-hero__stat">
-                <div class="dt-hero__stat-num">٤</div>
-                <div class="dt-hero__stat-label">باقات متخصصة</div>
+        {% if store.products_count is defined and store.products_count %}
+            <div class="dt-hero__stats">
+                <div class="dt-hero__stat">
+                    <div class="dt-hero__stat-num">{{ store.products_count|number }}</div>
+                    <div class="dt-hero__stat-label">{{ trans('hero.stat.products_label') }}</div>
+                </div>
             </div>
-            <div class="dt-hero__stat">
-                <div class="dt-hero__stat-num">{{ store.products_count|default(24)|number }}</div>
-                <div class="dt-hero__stat-label">منتج في المتجر</div>
-            </div>
-        </div>
+        {% endif %}
     </div>
 
     <div class="dt-hero__media">
         <div class="dt-hero__frame">
             {% if hero_image %}
-                <img src="{{ hero_image }}" alt="خطة غذائية متوازنة" class="dt-hero__img">
+                <img src="{{ hero_image }}" alt="{{ trans('hero.image_alt') }}" class="dt-hero__img">
             {% else %}
                 <div class="dt-hero__placeholder">
                     {% include 'partials.logo' with { width: 140 } %}
@@ -58,12 +56,12 @@
         </div>
 
         <div class="dt-hero__float">
-            <div class="dt-hero__float-label">خطتك الغذائية جاهزة</div>
-            <div class="dt-hero__float-title">أسبوع ١ — يبدأ اليوم</div>
+            <div class="dt-hero__float-label">{{ trans('hero.float.label') }}</div>
+            <div class="dt-hero__float-title">{{ trans('hero.float.title') }}</div>
             <div class="dt-hero__float-meals">
-                <span class="dt-hero__float-meal">وجبة الفطور</span>
-                <span class="dt-hero__float-meal">الغداء</span>
-                <span class="dt-hero__float-meal">العشاء</span>
+                <span class="dt-hero__float-meal">{{ trans('hero.float.breakfast') }}</span>
+                <span class="dt-hero__float-meal">{{ trans('hero.float.lunch') }}</span>
+                <span class="dt-hero__float-meal">{{ trans('hero.float.dinner') }}</span>
             </div>
         </div>
 

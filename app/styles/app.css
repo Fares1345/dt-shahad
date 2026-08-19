@@ -18,3 +18,24 @@ body.menu-opened {
   overflow: hidden;
   scrollbar-gutter: stable;
 }
+
+/* Keyboard focus indicator — visible on any background, absent for mouse clicks */
+:focus-visible {
+  outline: 2px solid var(--color-primary, #5A6340);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.85);
+}
+
+/* Respect users who prefer reduced motion — skip non-essential animation */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .dt-loader__spinner {
+    display: none;
+  }
+}

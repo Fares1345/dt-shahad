@@ -1,19 +1,214 @@
 {
-  "pages.cart.total": "Total",
-  "pages.cart.empty": "Your cart is empty",
-  "pages.cart.continue_shopping": "Continue Shopping",
-  "pages.products.add_to_cart": "Add to Cart",
-  "pages.products.out_of_stock": "Out of Stock",
-  "common.actions.save": "Save",
-  "common.actions.cancel": "Cancel",
-  "pages.thank_you.hero_title": "Thank you for shopping with us! 😊",
-  "pages.thank_you.description": "Your order has been received and will be reviewed and confirmed shortly.",
-  "pages.thank_you.view_order_details": "View Order Details",
-  "pages.thank_you.order_id_label": "Order ID",
-  "pages.thank_you.email_sent_to": "Email sent to",
-  "pages.thank_you.resend_invoice": "Resend invoice email",
-  "pages.thank_you.send": "Send",
-  "pages.thank_you.support": "Support",
-  "pages.thank_you.invoice_sent_success": "Invoice sent successfully",
-  "common.titles.home": "Home"
+  "common": {
+    "titles": {
+      "home": "Home"
+    },
+    "actions": {
+      "choose_package": "Choose package",
+      "add_to_cart": "Add to cart",
+      "out_of_stock": "Out of stock"
+    },
+    "elements": {
+      "quantity": "Quantity",
+      "email": "Email",
+      "mobile": "Mobile number",
+      "save": "Save",
+      "ok": "OK",
+      "cancel": "Cancel",
+      "warning": "Warning",
+      "note": "Note"
+    },
+    "uploader": {
+      "drag_and_drop": "Drag and drop",
+      "browse": "Browse"
+    },
+    "breadcrumb": {
+      "aria": "Breadcrumb"
+    }
+  },
+  "brand": {
+    "logo_aria": "DT. SHAHAD — Clinical Nutrition",
+    "loading": "DT. SHAHAD",
+    "tagline": "Clinical Nutritionist"
+  },
+  "noscript": {
+    "text": "To get full functionality of this site you need to enable JavaScript.",
+    "link": "How to enable JavaScript"
+  },
+  "header": {
+    "nav": {
+      "label": "Main navigation",
+      "packages": "Packages",
+      "about": "About us",
+      "blog": "Blog"
+    },
+    "mobile": {
+      "label": "Menu"
+    },
+    "aria": {
+      "search": "Search",
+      "cart": "Shopping cart",
+      "account": "Account",
+      "open_menu": "Open menu",
+      "close_menu": "Close menu"
+    }
+  },
+  "hero": {
+    "badge": "Customized meal plans 100%",
+    "title": "Nutrition designed\nfor your life",
+    "subtitle": "Evidence-based meal plans that help you build a more balanced lifestyle, tailored to your needs and daily routine.",
+    "cta": {
+      "primary": "Choose your package",
+      "secondary": "Discover DT. SHAHAD"
+    },
+    "stat": {
+      "products_label": "Products in store"
+    },
+    "image_alt": "Balanced meal plan",
+    "float": {
+      "label": "Your meal plan is ready",
+      "title": "Week 1 — starts today",
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner"
+    }
+  },
+  "packages": {
+    "eyebrow": "Packages",
+    "title": "4 packages, a plan that fits you",
+    "subtitle": "Choose the duration that fits your goals and start your journey with a therapeutic nutrition plan designed just for you.",
+    "featured_badge": "Most requested",
+    "details": "Package details →",
+    "empty": "No packages selected yet. Choose store products from the theme settings to show packages here."
+  },
+  "product": {
+    "title": ":name package",
+    "includes": "What's included in the package",
+    "features": "Features",
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "1": {
+        "q": "When will I receive my meal plan?",
+        "a": "After completing the data form, your plan is prepared within 24-48 working hours and sent to you directly."
+      },
+      "2": {
+        "q": "Can I modify the plan later?",
+        "a": "Yes, depending on the package selected, you can adjust your plan monthly or weekly with the team."
+      },
+      "3": {
+        "q": "Is the plan suitable for special health conditions?",
+        "a": "We take special health conditions into consideration and recommend consulting your doctor for precise cases."
+      },
+      "4": {
+        "q": "What payment methods are available?",
+        "a": "We accept Visa, Mada, STC Pay and Apple Pay. Payment is secure via the Salla platform."
+      },
+      "5": {
+        "q": "Can I cancel at any time?",
+        "a": "You can cancel the subscription according to the available cancellation policy before the plan is prepared."
+      }
+    },
+    "related": {
+      "title": "Other packages"
+    }
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "empty_cta": "Browse packages",
+    "remove": "Remove from cart",
+    "free_shipping": {
+      "title": "Free shipping",
+      "achieved": "You've earned free shipping",
+      "remaining": "Add :amount to get free shipping"
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "latest": "Latest articles",
+    "subtitle": "Tips and topics in therapeutic nutrition and a healthy lifestyle.",
+    "empty": "No articles yet.",
+    "read_more": "Read more →",
+    "author": "By :author",
+    "back": "← Back to blog"
+  },
+  "footer": {
+    "tagline": "Nutrition designed for your life. Evidence-based meal plans to help you build a more balanced lifestyle.",
+    "nav": {
+      "heading": "Navigation"
+    },
+    "contact": {
+      "heading": "Contact us",
+      "empty": "No contact information yet"
+    },
+    "copyright": "© 2026 DT. SHAHAD. All rights reserved.",
+    "powered": "Powered by Salla"
+  },
+  "pages": {
+    "cart": {
+      "total": "Total",
+      "empty": "Your cart is empty",
+      "continue_shopping": "Continue Shopping",
+      "cart_options": "Additional options"
+    },
+    "products": {
+      "add_to_cart": "Add to Cart",
+      "out_of_stock": "Out of Stock",
+      "quantity": "Quantity",
+      "price": "Price",
+      "attachments": "Attachments"
+    },
+    "listing": {
+      "sorting": "Sort by",
+      "filters": "Filters"
+    },
+    "profile": {
+      "first_name": "First name",
+      "last_name": "Last name",
+      "birthday": "Birthday",
+      "birthday_placeholder": "Choose your birthday",
+      "gender": "Gender",
+      "gender_placeholder": "Choose gender",
+      "male": "Male",
+      "female": "Female"
+    },
+    "orders": {
+      "non_orders": "You have no orders yet",
+      "date": "Date",
+      "status": "Status",
+      "total": "Total",
+      "print": "Print",
+      "shipment_no": "Shipment number",
+      "tracking_url": "Track shipment",
+      "file_url": "File URL",
+      "finish_payment": "Complete payment",
+      "pending_payment_expired": "Payment deadline has expired",
+      "reorder": "Reorder",
+      "reorder_description": "You can reorder the same products again.",
+      "reorder_confirmation": "Do you want to reorder the same products?",
+      "cancel": "Cancel order",
+      "cancel_confirmation": "Are you sure you want to cancel this order?"
+    },
+    "order": {
+      "option_name": "Option",
+      "option_content": "Content",
+      "order_cancelation_desc": "You can cancel the order before it starts processing."
+    },
+    "rating": {
+      "rate": "Rate",
+      "rate_the_store": "Rate the store",
+      "rate_shipping": "Rate the shipping"
+    },
+    "thank_you": {
+      "hero_title": "Thank you for shopping with us! 😊",
+      "description": "Your order has been received and will be reviewed and confirmed shortly.",
+      "view_order_details": "View Order Details",
+      "order_id_label": "Order ID",
+      "email_sent_to": "Email sent to",
+      "resend_invoice": "Resend invoice email",
+      "send": "Send",
+      "support": "Support",
+      "invoice_sent_success": "Invoice sent successfully"
+    }
+  }
 }
