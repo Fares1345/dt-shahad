@@ -60,6 +60,13 @@ node dev/serve.mjs
 
 Then open `http://localhost:5000` (override with `PORT=...`).
 
+`dev/index.html` is **auto-generated** from the real Twig sources
+(`src/views/**/*.twig` + `locales/ar.json`) by `dev/render.mjs`
+(twig.js + mock Salla data). The server re-renders it automatically
+whenever a Twig or locale file changes — editing `header.twig` etc. is
+reflected immediately after a page refresh. Render once without the
+server: `pnpm dev:render`.
+
 **Important:** this is a *visual-only* mockup. It has no live Salla store
 data and no native Salla web components — those only work inside a real
 Salla storefront (see "Official Salla preview" above). Do not treat it as

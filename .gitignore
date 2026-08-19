@@ -9,5 +9,7 @@ coverage/
 tsconfig.tsbuildinfo
 dev.log
 .tanstack/
+# Preprocessed twig tree used by the static preview renderer (dev/render.mjs)
+dev/.twig-build/
 # Empty JS stub if the CSS entry is ever re-wrapped in a TS entry (see vite.config.ts)
 public/assets/app.js
