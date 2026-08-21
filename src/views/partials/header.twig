@@ -6,11 +6,8 @@
         </a>
 
         <nav class="dt-nav" aria-label="{{ trans('header.nav.label') }}">
-            {# Custom static main nav (DT. SHAHAD design) - salla-menu for footer only #}
-            <a href="{{ link('/') }}" class="dt-nav__link{{ is_page('index') ? ' is-active' : '' }}">{{ trans('common.titles.home') }}</a>
-            <a href="{{ link('/') }}#packages" class="dt-nav__link">{{ trans('header.nav.packages') }}</a>
-            <a href="{{ link('/about') }}" class="dt-nav__link{{ is_page('page', 'about') ? ' is-active' : '' }}">{{ trans('header.nav.about') }}</a>
-            <a href="{{ link('/blog') }}" class="dt-nav__link{{ is_page('blog') ? ' is-active' : '' }}">{{ trans('header.nav.blog') }}</a>
+            {# Salla-managed header menu - styled to match DT design #}
+            <salla-menu data-testid="store-header-menu" source="header" class="dt-salla-menu"></salla-menu>
         </nav>
 
         <div class="dt-header__actions">
@@ -49,10 +46,10 @@
         </div>
     </div>
 
-    {# Mobile menu with Salla-managed menu (for admin-configured footer links) #}
+    {# Mobile menu with Salla-managed header menu #}
     <div class="dt-mobile-menu" id="dt-mobile-menu">
         <nav aria-label="{{ trans('header.mobile.label') }}">
-            <salla-menu data-testid="store-header-mobile-menu" source="main"></salla-menu>
+            <salla-menu data-testid="store-header-mobile-menu" source="header"></salla-menu>
         </nav>
     </div>
 
@@ -137,4 +134,23 @@
 <style>
     .dt-salla-contacts { display: contents; }
     .dt-header-contacts { margin-right: 16px; }
+
+    /* Style salla-menu to match DT. SHAHAD nav design */
+    .dt-salla-menu { display: contents; }
+    .dt-salla-menu a {
+        font-family: 'Cairo', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: #7A7869;
+        text-decoration: none;
+        padding: 8px 14px;
+        border-radius: 2px;
+        transition: color 0.2s ease;
+    }
+    .dt-salla-menu a:hover,
+    .dt-salla-menu a.is-active,
+    .dt-salla-menu a[aria-current="page"] {
+        color: #1C1B18;
+    }
+    .dt-salla-menu > :not(a) { display: none; }
 </style>
