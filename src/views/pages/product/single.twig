@@ -48,6 +48,7 @@
     <div class="dt-product">
 
         {# Breadcrumb: Home › Category (when available) › Product #}
+        {% if theme.settings.get('product_show_breadcrumbs', true) %}
         <nav class="dt-breadcrumb" aria-label="{{ trans('common.breadcrumb.aria') }}">
             <a href="{{ link('/') }}" class="dt-breadcrumb__link">{{ trans('common.titles.home') }}</a>
             {% if product_cat_name %}
@@ -61,6 +62,7 @@
             <span class="dt-breadcrumb__sep" aria-hidden="true">›</span>
             <span class="dt-breadcrumb__current">{{ product_name }}</span>
         </nav>
+        {% endif %}
 
         <div class="detail-grid dt-product__grid">
             {# Product visual card (real name/price only) #}

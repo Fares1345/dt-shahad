@@ -6,6 +6,7 @@
         </a>
 
         <nav class="dt-nav" aria-label="{{ trans('header.nav.label') }}">
+            {# Custom static main nav (DT. SHAHAD design) - salla-menu for footer only #}
             <a href="{{ link('/') }}" class="dt-nav__link{{ is_page('index') ? ' is-active' : '' }}">{{ trans('common.titles.home') }}</a>
             <a href="{{ link('/') }}#packages" class="dt-nav__link">{{ trans('header.nav.packages') }}</a>
             <a href="{{ link('/about') }}" class="dt-nav__link{{ is_page('page', 'about') ? ' is-active' : '' }}">{{ trans('header.nav.about') }}</a>
@@ -48,13 +49,16 @@
         </div>
     </div>
 
+    {# Mobile menu with Salla-managed menu (for admin-configured footer links) #}
     <div class="dt-mobile-menu" id="dt-mobile-menu">
         <nav aria-label="{{ trans('header.mobile.label') }}">
-            <a href="{{ link('/') }}" class="dt-mobile-menu__link">{{ trans('common.titles.home') }}</a>
-            <a href="{{ link('/') }}#packages" class="dt-mobile-menu__link">{{ trans('header.nav.packages') }}</a>
-            <a href="{{ link('/about') }}" class="dt-mobile-menu__link">{{ trans('header.nav.about') }}</a>
-            <a href="{{ link('/blog') }}" class="dt-mobile-menu__link">{{ trans('header.nav.blog') }}</a>
+            <salla-menu data-testid="store-header-mobile-menu" source="main"></salla-menu>
         </nav>
+    </div>
+
+    {# Salla contacts in header (admin-managed) #}
+    <div class="dt-header-contacts d-none d-lg-flex">
+        <salla-contacts data-testid="store-header-contacts" is-header class="dt-salla-contacts"></salla-contacts>
     </div>
 </header>
 
@@ -129,3 +133,8 @@
         });
     })();
 </script>
+
+<style>
+    .dt-salla-contacts { display: contents; }
+    .dt-header-contacts { margin-right: 16px; }
+</style>

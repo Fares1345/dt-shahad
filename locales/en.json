@@ -16,7 +16,8 @@
       "ok": "OK",
       "cancel": "Cancel",
       "warning": "Warning",
-      "note": "Note"
+      "note": "Note",
+      "tax_number": "Tax Number"
     },
     "uploader": {
       "drag_and_drop": "Drag and drop",
@@ -24,6 +25,14 @@
     },
     "breadcrumb": {
       "aria": "Breadcrumb"
+    }
+  },
+  "blocks": {
+    "footer": {
+      "pages_links": "Page Links"
+    },
+    "header": {
+      "main_menu": "Main Menu"
     }
   },
   "brand": {

@@ -16,7 +16,8 @@
       "ok": "موافق",
       "cancel": "إلغاء",
       "warning": "تحذير",
-      "note": "ملاحظة"
+      "note": "ملاحظة",
+      "tax_number": "الرقم الضريبي"
     },
     "uploader": {
       "drag_and_drop": "اسحب الملف وأفلته هنا",
@@ -24,6 +25,14 @@
     },
     "breadcrumb": {
       "aria": "مسار التنقل"
+    }
+  },
+  "blocks": {
+    "footer": {
+      "pages_links": "روابط الصفحات"
+    },
+    "header": {
+      "main_menu": "القائمة الرئيسية"
     }
   },
   "brand": {

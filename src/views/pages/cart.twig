@@ -34,6 +34,8 @@
         <div class="dt-cart__container">
             <h1 class="dt-cart__title">{{ trans('cart.title') }}</h1>
 
+            {% hook 'cart:items.start' %}
+
             {% if cart.items|length %}
                 {% if cart.free_shipping_bar %}
                     {% set fsb = cart.free_shipping_bar %}
@@ -86,10 +88,18 @@
                     </div>
 
                     <aside class="dt-cart__summary">
+                        {% hook 'cart:summary.start' %}
+
                         {% if store.settings.cart.apply_coupon_enabled %}
                             <salla-cart-coupons data-testid="store-cart-coupons"></salla-cart-coupons>
                         {% endif %}
+
                         <salla-cart-summary-card data-testid="store-cart-summary"></salla-cart-summary-card>
+
+                        {% hook 'cart:summary.end' %}
+
+                        {% hook 'cart:submit.start' %}
+                        {% hook 'cart:submit.end' %}
                     </aside>
                 </div>
             {% else %}
@@ -98,6 +108,8 @@
                     <a href="{{ link('/') }}" class="dt-btn dt-btn--primary">{{ trans('cart.empty_cta') }}</a>
                 </div>
             {% endif %}
+
+            {% hook 'cart:items.end' %}
         </div>
     </div>
 

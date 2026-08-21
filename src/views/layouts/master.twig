@@ -72,6 +72,14 @@
         {% hook 'body:end' %}
     </div>
 
+    {# Twilight Global Components - required for storefront functionality #}
+    <salla-offer-modal data-testid="store-offer-modal"></salla-offer-modal>
+    <salla-search data-testid="store-search-modal"></salla-search>
+    <salla-login-modal data-testid="store-login-modal"></salla-login-modal>
+    {% if store.scope %}
+        <salla-scopes data-testid="store-scopes" selection="{{ store.scope.display_as == 'popup' ? 'mandatory' : 'optional' }}"></salla-scopes>
+    {% endif %}
+
     {% block scripts %}{% endblock %}
 </body>
 </html>

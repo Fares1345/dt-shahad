@@ -14,7 +14,19 @@
         "color",
         "component-products-slider"
     ],
-    "settings": [],
+    "settings": [
+        {
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
+            "label": "إظهار مسار التنقل في صفحة المنتج",
+            "description": null,
+            "id": "product_show_breadcrumbs",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        }
+    ],
     "components": [
         {
             "key": "2f8a1c4e-9b3d-4f2a-8c1e-a7d5b6c3d0e1",
