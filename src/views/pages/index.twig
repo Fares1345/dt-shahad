@@ -1,17 +1,7 @@
-{#
-| Variable    | Type   | Description                                  |
-| page        | object | page.title, page.slug, ...                   |
-#}
 {% extends "layouts.master" %}
 
 {% block content %}
-    {% set home_components = theme.components('home') %}
-    {% if home_components|length %}
-        {% for component in home_components %}
-            {% component component.name with {component: component} %}
-        {% endfor %}
-    {% else %}
-        {% component 'home.dt-hero' %}
-        {% component 'home.dt-packages' %}
-    {% endif %}
+<div style="background:red;color:white;padding:80px;font-size:50px;font-weight:bold;text-align:center;">
+    INDEX TWIG TEST
+</div>
 {% endblock %}
